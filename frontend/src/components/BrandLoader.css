@@ -1,0 +1,502 @@
+/* =========================================================
+   ZAVYRO POSTERS
+   PREMIUM BRAND LOADER
+   ========================================================= */
+
+.brand-loader {
+  position: fixed;
+  inset: 0;
+
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+
+  overflow: hidden;
+
+  background: #080808;
+
+  isolation: isolate;
+}
+
+/* =========================================================
+   BACKGROUND
+   ========================================================= */
+
+.brand-loader::before {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 500px;
+  height: 500px;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.22) 0%,
+    rgba(124, 58, 237, 0.1) 35%,
+    transparent 70%
+  );
+
+  filter: blur(20px);
+
+  pointer-events: none;
+}
+
+/* Grid */
+.brand-loader::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(124, 58, 237, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(124, 58, 237, 0.035) 1px,
+      transparent 1px
+    );
+
+  background-size: 48px 48px;
+
+  mask-image: radial-gradient(
+    ellipse at center,
+    black 0%,
+    transparent 72%
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.brand-loader__content {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+/* =========================================================
+   LOGO AREA
+   ========================================================= */
+
+.brand-loader__logo {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100px;
+  height: 100px;
+
+  margin-bottom: 30px;
+}
+
+/* =========================================================
+   OUTER RING
+   ========================================================= */
+
+.brand-loader__ring {
+  position: absolute;
+
+  inset: -15px;
+
+  border: 1px solid rgba(139, 92, 246, 0.3);
+
+  border-top-color: #a78bfa;
+  border-right-color: #7c3aed;
+
+  border-radius: 50%;
+
+  animation: zavyro-spin 2.8s linear infinite;
+}
+
+.brand-loader__ring::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 7px;
+
+  border: 1px dashed rgba(139, 92, 246, 0.35);
+
+  border-radius: 50%;
+
+  animation: zavyro-spin-reverse 4s linear infinite;
+}
+
+/* =========================================================
+   Z LOGO
+   ========================================================= */
+
+.brand-loader__mark {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 76px;
+  height: 76px;
+
+  border-radius: 18px;
+
+  background: linear-gradient(
+    145deg,
+    #a78bfa 0%,
+    #7c3aed 45%,
+    #5b21b6 100%
+  );
+
+  color: white;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 44px;
+  font-weight: 900;
+
+  line-height: 1;
+
+  letter-spacing: -4px;
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 25px rgba(124, 58, 237, 0.5),
+    0 0 70px rgba(124, 58, 237, 0.2);
+
+  animation: zavyro-pulse 2s ease-in-out infinite;
+}
+
+/* Logo shine */
+.brand-loader__mark::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 1px;
+
+  border-radius: 17px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.28),
+    transparent 40%
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   CORNER MARKS
+   ========================================================= */
+
+.brand-loader__corner {
+  position: absolute;
+
+  width: 20px;
+  height: 20px;
+
+  border-color: rgba(167, 139, 250, 0.65);
+
+  border-style: solid;
+
+  pointer-events: none;
+}
+
+.brand-loader__corner--top-left {
+  top: -28px;
+  left: -28px;
+
+  border-width: 1px 0 0 1px;
+}
+
+.brand-loader__corner--top-right {
+  top: -28px;
+  right: -28px;
+
+  border-width: 1px 1px 0 0;
+}
+
+.brand-loader__corner--bottom-left {
+  bottom: -28px;
+  left: -28px;
+
+  border-width: 0 0 1px 1px;
+}
+
+.brand-loader__corner--bottom-right {
+  right: -28px;
+  bottom: -28px;
+
+  border-width: 0 1px 1px 0;
+}
+
+/* =========================================================
+   BRAND NAME
+   ========================================================= */
+
+.brand-loader__name {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 38px;
+  font-weight: 900;
+
+  line-height: 1;
+
+  letter-spacing: 0.18em;
+
+  text-indent: 0.18em;
+}
+
+.brand-loader__subname {
+  margin-top: 10px;
+
+  color: #a1a1aa;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  line-height: 1;
+
+  letter-spacing: 0.48em;
+
+  text-indent: 0.48em;
+}
+
+/* =========================================================
+   TAGLINE
+   ========================================================= */
+
+.brand-loader__tagline {
+  margin-top: 26px;
+
+  color: #71717a;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  line-height: 1;
+
+  letter-spacing: 0.3em;
+
+  text-indent: 0.3em;
+}
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.brand-loader__progress {
+  position: relative;
+
+  width: 180px;
+  height: 2px;
+
+  margin-top: 20px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.brand-loader__progress::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -50%;
+
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #a78bfa,
+    #7c3aed,
+    transparent
+  );
+
+  animation: zavyro-progress 1.2s ease-in-out infinite;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes zavyro-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes zavyro-spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes zavyro-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 0 25px rgba(124, 58, 237, 0.5),
+      0 0 70px rgba(124, 58, 237, 0.2);
+  }
+
+  50% {
+    transform: scale(1.04);
+
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.14),
+      0 0 40px rgba(124, 58, 237, 0.7),
+      0 0 90px rgba(124, 58, 237, 0.3);
+  }
+}
+
+@keyframes zavyro-progress {
+  0% {
+    left: -50%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .brand-loader::before {
+    width: 350px;
+    height: 350px;
+  }
+
+  .brand-loader__logo {
+    width: 82px;
+    height: 82px;
+
+    margin-bottom: 24px;
+  }
+
+  .brand-loader__mark {
+    width: 64px;
+    height: 64px;
+
+    border-radius: 15px;
+
+    font-size: 37px;
+  }
+
+  .brand-loader__ring {
+    inset: -12px;
+  }
+
+  .brand-loader__corner--top-left {
+    top: -22px;
+    left: -22px;
+  }
+
+  .brand-loader__corner--top-right {
+    top: -22px;
+    right: -22px;
+  }
+
+  .brand-loader__corner--bottom-left {
+    bottom: -22px;
+    left: -22px;
+  }
+
+  .brand-loader__corner--bottom-right {
+    right: -22px;
+    bottom: -22px;
+  }
+
+  .brand-loader__name {
+    font-size: 28px;
+
+    letter-spacing: 0.14em;
+    text-indent: 0.14em;
+  }
+
+  .brand-loader__subname {
+    font-size: 8px;
+
+    letter-spacing: 0.38em;
+    text-indent: 0.38em;
+  }
+
+  .brand-loader__tagline {
+    font-size: 8px;
+
+    letter-spacing: 0.22em;
+    text-indent: 0.22em;
+  }
+
+  .brand-loader__progress {
+    width: 150px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-loader__ring,
+  .brand-loader__ring::before,
+  .brand-loader__mark,
+  .brand-loader__progress::after {
+    animation: none;
+  }
+}

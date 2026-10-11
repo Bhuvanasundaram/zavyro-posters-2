@@ -1,0 +1,896 @@
+/* =========================================================
+   ZAVYRO CUSTOMER WALL
+   ORIGINAL MARQUEE BEHAVIOR PRESERVED
+   LIGHT MODE FIX ONLY
+   ========================================================= */
+
+.customer-wall {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  padding: 80px 0 100px;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(124, 58, 237, 0.13),
+      transparent 36%
+    ),
+    var(--z-bg);
+}
+
+/* =========================================================
+   FAN REVIEW HEADING
+   ========================================================= */
+
+.customer-wall-heading {
+  width: min(92%, 760px);
+  margin: 0 auto 42px;
+  text-align: center;
+}
+
+.customer-wall-eyebrow {
+  display: inline-block;
+  margin-bottom: 12px;
+
+  color: var(--z-accent);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.customer-wall-heading h2 {
+  margin: 0;
+
+  color: var(--z-text);
+
+  font-size: clamp(40px, 8vw, 76px);
+  line-height: 0.92;
+  font-weight: 950;
+  letter-spacing: -0.06em;
+}
+
+.customer-wall-heading h2 span {
+  color: var(--z-accent);
+}
+
+.customer-wall-heading p {
+  max-width: 520px;
+  margin: 18px auto 0;
+
+  color: var(--z-text-secondary);
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   SINGLE MEDIA ROW
+   IMPORTANT:
+   DO NOT CHANGE THE MARQUEE STRUCTURE
+   ========================================================= */
+
+.fan-media-gallery {
+  width: 100%;
+  overflow: hidden;
+
+  padding: 8px 0 22px;
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 6%,
+    black 94%,
+    transparent 100%
+  );
+}
+
+.fan-media-track {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  animation: fanMediaMove var(--fan-media-speed, 45s) linear infinite;
+  will-change: transform;
+}
+
+.fan-media-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  padding-right: 18px;
+}
+
+/* =========================================================
+   MEDIA CARD
+   ========================================================= */
+
+.fan-media-card {
+  position: relative;
+
+  flex: 0 0 250px;
+
+  width: 250px;
+  height: 340px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 20px;
+
+  background: #151515;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.4);
+
+  isolation: isolate;
+}
+
+.fan-media-inner {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      #181818,
+      #0d0d0d
+    );
+}
+
+/* =========================================================
+   IMAGE
+   ========================================================= */
+
+.fan-media-content {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  background: #181818;
+
+  user-select: none;
+
+  -webkit-user-drag: none;
+
+  transition:
+    transform 500ms ease,
+    opacity 300ms ease;
+}
+
+.fan-media-card:hover .fan-media-content {
+  transform: scale(1.04);
+}
+
+/* =========================================================
+   FALLBACK BACKGROUND
+   ========================================================= */
+
+.fan-media-fallback {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(139, 92, 246, 0.5),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      #181818,
+      #080808
+    );
+
+  color: white;
+
+  opacity: 0;
+
+  transition: opacity 200ms ease;
+}
+
+.fan-media-inner.media-failed .fan-media-fallback {
+  opacity: 1;
+}
+
+.fan-fallback-logo {
+  display: grid;
+
+  place-items: center;
+
+  width: 64px;
+  height: 64px;
+
+  border-radius: 18px;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--z-purple),
+      var(--z-purple-light)
+    );
+
+  font-size: 30px;
+
+  font-weight: 950;
+
+  box-shadow:
+    0 12px 35px rgba(124, 58, 237, 0.4);
+}
+
+.fan-media-fallback strong {
+  font-size: 15px;
+  letter-spacing: 0.15em;
+}
+
+.fan-media-fallback span {
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+/* =========================================================
+   MEDIA OVERLAY
+   ========================================================= */
+
+.fan-media-gradient {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 2;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent 45%,
+      rgba(0, 0, 0, 0.65) 100%
+    );
+}
+
+.fan-media-label {
+  position: absolute;
+
+  left: 15px;
+  bottom: 14px;
+
+  z-index: 4;
+
+  color: white;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.15em;
+}
+
+/* =========================================================
+   WRITTEN REVIEWS SECTION
+   ========================================================= */
+
+.customer-written-section {
+  margin-top: 100px;
+}
+
+.customer-written-heading {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  text-align: center;
+}
+
+.customer-written-heading > span {
+  margin-bottom: 12px;
+
+  color: var(--z-accent);
+
+  font-size: 10px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.2em;
+
+  text-transform: uppercase;
+}
+
+.customer-written-heading h3 {
+  margin: 0;
+
+  color: var(--z-text);
+
+  font-size: clamp(30px, 6vw, 52px);
+
+  line-height: 1;
+
+  font-weight: 900;
+
+  letter-spacing: -0.045em;
+}
+
+.customer-written-heading h3 em {
+  color: var(--z-accent);
+  font-style: normal;
+}
+
+/* =========================================================
+   RATING
+   ========================================================= */
+
+.overall-rating {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-top: 20px;
+}
+
+.overall-rating strong {
+  color: var(--z-text);
+
+  font-size: 32px;
+
+  font-weight: 900;
+}
+
+.overall-stars {
+  color: #f59e0b;
+
+  font-size: 15px;
+
+  letter-spacing: 0.08em;
+}
+
+.overall-rating span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--z-text-muted);
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   REVIEWS ROW
+   ========================================================= */
+
+.customer-reviews-gallery {
+  width: 100%;
+
+  overflow: hidden;
+
+  margin-top: 42px;
+
+  padding: 8px 0 15px;
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 5%,
+    black 95%,
+    transparent
+  );
+
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 5%,
+    black 95%,
+    transparent
+  );
+}
+
+.customer-reviews-track {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  animation: customerReviewMove var(--customer-review-speed, 60s) linear infinite;
+
+  will-change: transform;
+}
+
+.customer-reviews-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 18px;
+  padding-right: 18px;
+}
+
+/* =========================================================
+   REVIEW CARD
+   ORIGINAL DARK MODE APPEARANCE
+   ========================================================= */
+
+.customer-review-card {
+  flex: 0 0 360px;
+
+  width: 360px;
+
+  min-height: 205px;
+
+  padding: 24px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #171717,
+      #101010
+    );
+
+  color: var(--z-text);
+
+  box-shadow:
+    0 16px 45px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 300ms ease,
+    border-color 300ms ease;
+}
+
+.customer-review-card:hover {
+  transform: translateY(-4px);
+
+  border-color:
+    rgba(124, 58, 237, 0.45);
+}
+
+/* =========================================================
+   LIGHT MODE
+   ONLY FIX THE BLACK REVIEW BOXES
+   ========================================================= */
+
+[data-theme="light"] .customer-review-card {
+  border-color: var(--z-border);
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8fafc
+    );
+
+  color: var(--z-text);
+
+  box-shadow:
+    0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .customer-review-card:hover {
+  border-color:
+    rgba(124, 58, 237, 0.35);
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8fafc
+    );
+}
+
+[data-theme="light"] .customer-review-card p {
+  color: var(--z-text-secondary);
+}
+
+[data-theme="light"] .customer-info strong {
+  color: var(--z-text);
+}
+
+[data-theme="light"] .customer-info span {
+  color: var(--z-text-muted);
+}
+
+/* =========================================================
+   REVIEW TOP
+   ========================================================= */
+
+.customer-review-top {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.customer-avatar {
+  display: grid;
+
+  flex: 0 0 44px;
+
+  place-items: center;
+
+  width: 44px;
+  height: 44px;
+
+  border-radius: 50%;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--z-purple),
+      var(--z-purple-light)
+    );
+
+  font-size: 15px;
+
+  font-weight: 900;
+}
+
+.customer-info {
+  min-width: 0;
+}
+
+.customer-info strong {
+  display: block;
+
+  color: var(--z-text);
+
+  font-size: 14px;
+
+  font-weight: 800;
+}
+
+.customer-info span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--z-text-muted);
+
+  font-size: 11px;
+}
+
+.customer-rating {
+  margin-left: auto;
+
+  color: #f59e0b;
+
+  font-size: 12px;
+
+  letter-spacing: 0.04em;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   REVIEW TEXT
+   ========================================================= */
+
+.customer-review-card p {
+  margin: 20px 0 0;
+
+  color: var(--z-text-secondary);
+
+  font-size: 14px;
+
+  line-height: 1.75;
+}
+
+/* =========================================================
+   ANIMATIONS
+   DO NOT CHANGE
+   ========================================================= */
+
+@keyframes fanMediaMove {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes customerReviewMove {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ONLY SIZE / SPACING CHANGES
+   MARQUEE IS UNTOUCHED
+   ========================================================= */
+
+@media (max-width: 639px) {
+  .customer-wall {
+    padding: 52px 0 65px;
+  }
+
+  .customer-wall-heading {
+    width: min(90%, 520px);
+    margin-bottom: 24px;
+  }
+
+  .customer-wall-eyebrow {
+    margin-bottom: 8px;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+  }
+
+  .customer-wall-heading h2 {
+    font-size: 38px;
+  }
+
+  .customer-wall-heading p {
+    max-width: 330px;
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .fan-media-gallery {
+    padding: 4px 0 16px;
+  }
+
+  .fan-media-track {
+    gap: 11px;
+  }
+
+  .fan-media-card {
+    flex-basis: 155px;
+    width: 155px;
+    height: 210px;
+
+    border-radius: 13px;
+
+    box-shadow:
+      0 10px 28px rgba(0, 0, 0, 0.32);
+  }
+
+  .fan-media-label {
+    left: 10px;
+    bottom: 10px;
+
+    font-size: 7px;
+    letter-spacing: 0.12em;
+  }
+
+  .fan-fallback-logo {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 13px;
+
+    font-size: 23px;
+  }
+
+  .fan-media-fallback {
+    gap: 6px;
+  }
+
+  .fan-media-fallback strong {
+    font-size: 11px;
+  }
+
+  .fan-media-fallback span {
+    font-size: 8px;
+  }
+
+  /* =====================================================
+     WRITTEN REVIEWS
+     ===================================================== */
+
+  .customer-written-section {
+    margin-top: 62px;
+  }
+
+  .customer-written-heading > span {
+    margin-bottom: 8px;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+  }
+
+  .customer-written-heading h3 {
+    max-width: 340px;
+    font-size: 29px;
+    line-height: 1.02;
+  }
+
+  .overall-rating {
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .overall-rating strong {
+    font-size: 26px;
+  }
+
+  .overall-stars {
+    font-size: 12px;
+  }
+
+  .overall-rating span {
+    font-size: 8px;
+  }
+
+  .customer-reviews-gallery {
+    margin-top: 26px;
+    padding: 4px 0 12px;
+  }
+
+  .customer-reviews-track {
+    gap: 11px;
+  }
+
+  .customer-review-card {
+    flex-basis: 275px;
+    width: 275px;
+
+    min-height: 165px;
+
+    padding: 17px;
+
+    border-radius: 14px;
+  }
+
+  .customer-review-top {
+    gap: 9px;
+  }
+
+  .customer-avatar {
+    flex-basis: 36px;
+
+    width: 36px;
+    height: 36px;
+
+    font-size: 12px;
+  }
+
+  .customer-info strong {
+    font-size: 12px;
+  }
+
+  .customer-info span {
+    margin-top: 2px;
+    font-size: 9px;
+  }
+
+  .customer-rating {
+    font-size: 9px;
+  }
+
+  .customer-review-card p {
+    margin-top: 14px;
+
+    font-size: 11px;
+    line-height: 1.55;
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (min-width: 640px) {
+  .customer-wall {
+    padding: 95px 0 115px;
+  }
+
+  .fan-media-group {
+    gap: 20px;
+  }
+
+  .fan-media-card {
+    flex-basis: 280px;
+
+    width: 280px;
+
+    height: 380px;
+  }
+}
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  .customer-wall {
+    padding: 115px 0 135px;
+  }
+
+  .fan-media-group {
+    gap: 22px;
+  }
+
+  .fan-media-card {
+    flex-basis: 315px;
+
+    width: 315px;
+
+    height: 420px;
+
+    border-radius: 22px;
+  }
+
+  .customer-written-section {
+    margin-top: 120px;
+  }
+
+  .customer-reviews-group {
+    gap: 20px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .fan-media-track,
+  .customer-reviews-track {
+    animation: none;
+  }
+
+  .fan-media-gallery,
+  .customer-reviews-gallery {
+    overflow-x: auto;
+
+    -webkit-mask-image: none;
+
+    mask-image: none;
+  }
+
+  .fan-media-card:hover .fan-media-content {
+    transform: none;
+  }
+}

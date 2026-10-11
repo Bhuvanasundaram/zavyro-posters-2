@@ -1,0 +1,543 @@
+/* ============================================================
+   ZAVYRO POSTERS 2.0
+   PHYSICAL POSTER DISPLAY
+   ============================================================ */
+
+.poster-display {
+  --poster-radius: 2px;
+  --panel-gap: 9px;
+
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.poster-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 50% 40%,
+      rgba(124, 58, 237, 0.13),
+      transparent 70%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.025),
+      transparent 40%
+    );
+}
+
+.poster-scene-glow {
+  position: absolute;
+  width: 75%;
+  height: 65%;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.13);
+  filter: blur(70px);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.poster-wall {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.poster-wall-texture {
+  position: absolute;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(255, 255, 255, 0.035),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(255, 255, 255, 0.025),
+      transparent 30%
+    );
+
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ============================================================
+   NORMAL POSTER
+   ============================================================ */
+
+.single-poster-wrap {
+  position: relative;
+
+  width: min(66%, 270px);
+  height: 84%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  perspective: 1000px;
+}
+
+.single-poster-shadow {
+  position: absolute;
+
+  width: 91%;
+  height: 95%;
+
+  transform: translate(12px, 17px);
+
+  background: rgba(0, 0, 0, 0.58);
+  filter: blur(16px);
+
+  border-radius: 3px;
+}
+
+.single-poster {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  border-radius: var(--poster-radius);
+
+  background: #080808;
+
+  box-shadow:
+    0 22px 42px rgba(0, 0, 0, 0.36),
+    0 5px 12px rgba(0, 0, 0, 0.22);
+
+  transform:
+    perspective(1000px)
+    rotateY(-1.4deg)
+    rotateX(0.4deg);
+
+  transition:
+    transform 500ms cubic-bezier(0.2, 0.75, 0.2, 1),
+    box-shadow 500ms ease;
+}
+
+.poster-display-hovered .single-poster {
+  transform:
+    perspective(1000px)
+    translateY(-4px)
+    rotateY(-1.4deg)
+    rotateX(0.4deg)
+    scale(1.015);
+
+  box-shadow:
+    0 30px 55px rgba(0, 0, 0, 0.44),
+    0 7px 18px rgba(0, 0, 0, 0.25);
+}
+
+.poster-paper-edge {
+  position: absolute;
+  inset: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.13);
+
+  z-index: 5;
+  pointer-events: none;
+}
+
+.poster-art {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+}
+
+.poster-art-image {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.poster-highlight {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.13),
+      transparent 17%,
+      transparent 75%,
+      rgba(255, 255, 255, 0.025)
+    );
+
+  opacity: 0.6;
+
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* ============================================================
+   PANEL
+   ============================================================ */
+
+.panel-stage {
+  position: relative;
+
+  width: 92%;
+  height: 72%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  perspective: 1300px;
+}
+
+.panel-shadow-layer {
+  position: absolute;
+
+  width: 91%;
+  height: 82%;
+
+  transform:
+    translateY(16px)
+    translateX(10px);
+
+  background: rgba(0, 0, 0, 0.55);
+  filter: blur(18px);
+
+  border-radius: 5px;
+}
+
+.panel-piece-wrap {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--panel-gap);
+
+  transform:
+    perspective(1300px)
+    rotateX(1.5deg)
+    rotateY(-1deg);
+
+  transition:
+    transform 500ms cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+
+.poster-display-hovered .panel-piece-wrap {
+  transform:
+    perspective(1300px)
+    translateY(-4px)
+    rotateX(1.5deg)
+    rotateY(-1deg)
+    scale(1.012);
+}
+
+.panel-piece {
+  position: relative;
+
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #090909;
+
+  box-shadow:
+    0 19px 30px rgba(0, 0, 0, 0.34),
+    0 5px 10px rgba(0, 0, 0, 0.22);
+
+  border-radius: 2px;
+
+  transform-style: preserve-3d;
+}
+
+.panel-piece-left {
+  transform: translateY(1px) rotateZ(-0.25deg);
+}
+
+.panel-piece-center {
+  transform: translateY(-1px);
+}
+
+.panel-piece-right {
+  transform: translateY(1px) rotateZ(0.25deg);
+}
+
+.panel-paper-edge {
+  position: absolute;
+  inset: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  z-index: 8;
+  pointer-events: none;
+}
+
+.panel-art {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+}
+
+/*
+  IMPORTANT:
+
+  Each panel's image is 300% wide.
+
+  Therefore the artwork belongs to ONE continuous
+  3-panel image space.
+
+  LEFT:
+  300% image translated 0%
+
+  CENTER:
+  300% image translated -33.333%
+
+  RIGHT:
+  300% image translated -66.666%
+
+  This is what prevents the three panels from
+  looking like three separate poster copies.
+*/
+
+.panel-art-image {
+  position: absolute;
+  top: 0;
+
+  width: 300%;
+  height: 100%;
+
+  max-width: none;
+
+  display: block;
+
+  object-fit: cover;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.panel-art-image-left {
+  left: 0;
+}
+
+.panel-art-image-center {
+  left: -100%;
+}
+
+.panel-art-image-right {
+  left: -200%;
+}
+
+.panel-highlight {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.14),
+      transparent 16%,
+      transparent 80%,
+      rgba(255, 255, 255, 0.025)
+    );
+
+  opacity: 0.58;
+
+  pointer-events: none;
+  z-index: 9;
+}
+
+.poster-floor-shadow {
+  position: absolute;
+
+  width: 65%;
+  height: 10%;
+
+  bottom: 5%;
+
+  border-radius: 50%;
+
+  background: rgba(0, 0, 0, 0.4);
+  filter: blur(25px);
+
+  pointer-events: none;
+}
+
+/* ============================================================
+   SIZES
+   ============================================================ */
+
+.poster-size-a6 .single-poster-wrap {
+  width: min(42%, 180px);
+  height: 74%;
+}
+
+.poster-size-a5 .single-poster-wrap {
+  width: min(50%, 205px);
+  height: 78%;
+}
+
+.poster-size-a4 .single-poster-wrap {
+  width: min(62%, 255px);
+  height: 84%;
+}
+
+.poster-size-a3 .single-poster-wrap {
+  width: min(70%, 285px);
+  height: 88%;
+}
+
+.poster-size-a5 .panel-stage {
+  height: 66%;
+}
+
+.poster-size-a4 .panel-stage {
+  height: 72%;
+}
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+
+[data-theme="light"] .poster-scene {
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 50% 40%,
+      rgba(124, 58, 237, 0.08),
+      transparent 70%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(0, 0, 0, 0.025),
+      transparent 40%
+    );
+}
+
+[data-theme="light"] .poster-wall-texture {
+  opacity: 0.35;
+}
+
+[data-theme="light"] .single-poster,
+[data-theme="light"] .panel-piece {
+  box-shadow:
+    0 22px 42px rgba(15, 23, 42, 0.17),
+    0 5px 12px rgba(15, 23, 42, 0.12);
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+  .poster-scene {
+    min-height: 280px;
+  }
+
+  .single-poster-wrap {
+    width: min(60%, 205px);
+    height: 82%;
+  }
+
+  .poster-size-a6 .single-poster-wrap {
+    width: 45%;
+  }
+
+  .poster-size-a5 .single-poster-wrap {
+    width: 52%;
+  }
+
+  .poster-size-a4 .single-poster-wrap,
+  .poster-size-a3 .single-poster-wrap {
+    width: 60%;
+  }
+
+  .panel-stage {
+    width: 95%;
+    height: 62%;
+  }
+
+  .poster-size-a4 .panel-stage {
+    height: 66%;
+  }
+
+  .poster-size-a5 .panel-stage {
+    height: 60%;
+  }
+
+  .panel-piece-wrap {
+    gap: 5px;
+  }
+
+  .panel-shadow-layer {
+    transform: translateY(11px) translateX(6px);
+  }
+}
+
+@media (max-width: 460px) {
+  .poster-scene {
+    min-height: 245px;
+  }
+
+  .single-poster-wrap {
+    width: 55%;
+  }
+
+  .panel-stage {
+    width: 96%;
+    height: 55%;
+  }
+
+  .poster-size-a4 .panel-stage {
+    height: 59%;
+  }
+
+  .poster-size-a5 .panel-stage {
+    height: 54%;
+  }
+
+  .panel-piece-wrap {
+    gap: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .single-poster,
+  .panel-piece-wrap {
+    transition: none;
+  }
+}

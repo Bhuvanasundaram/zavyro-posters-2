@@ -1,0 +1,251 @@
+/* =========================================================
+   ZAVYRO POSTERS 2.0
+   THEME SYSTEM
+   ========================================================= */
+
+/* =========================================================
+   DARK — ZAVYRO SIGNATURE
+   ========================================================= */
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #080808;
+  --color-bg-secondary: #0d0d0d;
+  --color-bg-tertiary: #141414;
+
+  --color-surface: #111111;
+  --color-surface-hover: #181818;
+  --color-surface-elevated: #1a1a1a;
+
+  --color-text: #ffffff;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-text-inverse: #080808;
+
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
+
+  --color-accent: #7c3aed;
+  --color-accent-light: #8b5cf6;
+  --color-accent-dark: #5b21b6;
+  --color-accent-soft: rgba(124, 58, 237, 0.14);
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+
+  --color-overlay: rgba(0, 0, 0, 0.72);
+
+  --header-bg: rgba(8, 8, 8, 0.82);
+  --header-border: rgba(255, 255, 255, 0.08);
+
+  --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.30);
+
+  --gradient-brand:
+    linear-gradient(
+      135deg,
+      #7c3aed 0%,
+      #8b5cf6 50%,
+      #a78bfa 100%
+    );
+
+  --gradient-hero:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(124, 58, 237, 0.24),
+      transparent 55%
+    );
+}
+
+
+/* =========================================================
+   LIGHT — PROFESSIONAL PREMIUM
+   ========================================================= */
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: #f8fafc;
+  --color-bg-secondary: #f1f5f9;
+  --color-bg-tertiary: #e2e8f0;
+
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8fafc;
+  --color-surface-elevated: #ffffff;
+
+  --color-text: #111827;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #ffffff;
+
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  --color-accent: #7c3aed;
+  --color-accent-light: #8b5cf6;
+  --color-accent-dark: #5b21b6;
+  --color-accent-soft: rgba(124, 58, 237, 0.09);
+
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
+
+  --color-overlay: rgba(15, 23, 42, 0.48);
+
+  --header-bg: rgba(255, 255, 255, 0.86);
+  --header-border: rgba(15, 23, 42, 0.08);
+
+  --card-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+
+  --gradient-brand:
+    linear-gradient(
+      135deg,
+      #6d28d9 0%,
+      #7c3aed 50%,
+      #8b5cf6 100%
+    );
+
+  --gradient-hero:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(124, 58, 237, 0.12),
+      transparent 55%
+    );
+}
+
+
+/* =========================================================
+   SMOOTH THEME TRANSITIONS
+   ========================================================= */
+
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    box-shadow 220ms ease,
+    fill 220ms ease,
+    stroke 220ms ease !important;
+}
+
+
+/* =========================================================
+   SYSTEM FALLBACK
+   If the user has not selected a theme manually,
+   the application can use the operating-system preference.
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"] {
+    color-scheme: dark;
+
+    --color-bg: #080808;
+    --color-bg-secondary: #0d0d0d;
+    --color-bg-tertiary: #141414;
+
+    --color-surface: #111111;
+    --color-surface-hover: #181818;
+    --color-surface-elevated: #1a1a1a;
+
+    --color-text: #ffffff;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
+    --color-text-inverse: #080808;
+
+    --color-border: rgba(255, 255, 255, 0.10);
+    --color-border-strong: rgba(255, 255, 255, 0.18);
+
+    --color-accent: #7c3aed;
+    --color-accent-light: #8b5cf6;
+    --color-accent-dark: #5b21b6;
+    --color-accent-soft: rgba(124, 58, 237, 0.14);
+
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-info: #3b82f6;
+
+    --color-overlay: rgba(0, 0, 0, 0.72);
+
+    --header-bg: rgba(8, 8, 8, 0.82);
+    --header-border: rgba(255, 255, 255, 0.08);
+
+    --card-shadow: 0 12px 40px rgba(0, 0, 0, 0.30);
+
+    --gradient-brand:
+      linear-gradient(
+        135deg,
+        #7c3aed 0%,
+        #8b5cf6 50%,
+        #a78bfa 100%
+      );
+
+    --gradient-hero:
+      radial-gradient(
+        circle at 50% 0%,
+        rgba(124, 58, 237, 0.24),
+        transparent 55%
+      );
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  [data-theme="system"] {
+    color-scheme: light;
+
+    --color-bg: #f8fafc;
+    --color-bg-secondary: #f1f5f9;
+    --color-bg-tertiary: #e2e8f0;
+
+    --color-surface: #ffffff;
+    --color-surface-hover: #f8fafc;
+    --color-surface-elevated: #ffffff;
+
+    --color-text: #111827;
+    --color-text-secondary: #475569;
+    --color-text-muted: #64748b;
+    --color-text-inverse: #ffffff;
+
+    --color-border: #e2e8f0;
+    --color-border-strong: #cbd5e1;
+
+    --color-accent: #7c3aed;
+    --color-accent-light: #8b5cf6;
+    --color-accent-dark: #5b21b6;
+    --color-accent-soft: rgba(124, 58, 237, 0.09);
+
+    --color-success: #16a34a;
+    --color-warning: #d97706;
+    --color-danger: #dc2626;
+    --color-info: #2563eb;
+
+    --color-overlay: rgba(15, 23, 42, 0.48);
+
+    --header-bg: rgba(255, 255, 255, 0.86);
+    --header-border: rgba(15, 23, 42, 0.08);
+
+    --card-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+
+    --gradient-brand:
+      linear-gradient(
+        135deg,
+        #6d28d9 0%,
+        #7c3aed 50%,
+        #8b5cf6 100%
+      );
+
+    --gradient-hero:
+      radial-gradient(
+        circle at 50% 0%,
+        rgba(124, 58, 237, 0.12),
+        transparent 55%
+      );
+  }
+}

@@ -1,0 +1,723 @@
+/* =========================================================
+   ZAVYRO POSTERS
+   CUSTOMIZE CTA
+   COMPLETE REPLACEMENT
+   ========================================================= */
+
+.customize-cta {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 64px 0 70px;
+  background: transparent;
+}
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.customize-cta-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 50px;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.customize-cta-content {
+  position: relative;
+  z-index: 20;
+  min-width: 0;
+  text-align: center;
+}
+
+.customize-cta-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  margin-bottom: 15px;
+
+  color: #a78bfa;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  line-height: 1;
+}
+
+.customize-cta-eyebrow span {
+  width: 18px;
+  height: 1px;
+  background: #8b5cf6;
+  opacity: 0.8;
+}
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.customize-cta-content h2 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: clamp(42px, 12vw, 76px);
+  font-weight: 950;
+  line-height: 0.88;
+  letter-spacing: -0.065em;
+}
+
+.customize-cta-content h2 strong {
+  color: #8b5cf6;
+  font-weight: 950;
+}
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.customize-cta-content > p {
+  max-width: 430px;
+  margin: 18px auto 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   FEATURES
+   ========================================================= */
+
+.customize-cta-features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+
+  margin-top: 20px;
+}
+
+.customize-cta-feature {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  min-height: 29px;
+  padding: 0 10px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  color: var(--color-text-secondary);
+
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.customize-cta-feature b {
+  color: #a78bfa;
+  font-size: 11px;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.customize-cta-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin-top: 23px;
+}
+
+.customize-cta-primary,
+.customize-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 46px;
+  padding: 0 20px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-decoration: none;
+
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
+}
+
+.customize-cta-primary {
+  gap: 10px;
+
+  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #6d28d9,
+    #8b5cf6
+  );
+
+  box-shadow:
+    0 12px 35px rgba(124, 58, 237, 0.25);
+}
+
+.customize-cta-primary span {
+  font-size: 15px;
+}
+
+.customize-cta-primary:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 18px 45px rgba(124, 58, 237, 0.38);
+}
+
+.customize-cta-secondary {
+  color: var(--color-text);
+
+  border: 1px solid var(--color-border);
+
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.customize-cta-secondary:hover {
+  transform: translateY(-3px);
+
+  border-color: rgba(139, 92, 246, 0.5);
+
+  background: rgba(139, 92, 246, 0.07);
+}
+
+/* =========================================================
+   VISUAL
+   ========================================================= */
+
+.customize-cta-visual {
+  position: relative;
+
+  width: 100%;
+  max-width: 330px;
+  height: 330px;
+
+  margin: 0 auto;
+
+  isolation: isolate;
+}
+
+/* =========================================================
+   PURPLE BACKGROUND GLOW
+   ========================================================= */
+
+.customize-cta-visual::before {
+  content: "";
+
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  width: 220px;
+  height: 220px;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(124, 58, 237, 0.28),
+      rgba(124, 58, 237, 0.08) 45%,
+      transparent 72%
+    );
+
+  filter: blur(18px);
+
+  pointer-events: none;
+
+  z-index: -2;
+}
+
+/* =========================================================
+   ORBITS
+   ========================================================= */
+
+.customize-cta-orbit {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  border: 1px solid rgba(139, 92, 246, 0.12);
+
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%) rotate(-18deg);
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
+.customize-cta-orbit-one {
+  width: 280px;
+  height: 150px;
+}
+
+.customize-cta-orbit-two {
+  width: 310px;
+  height: 185px;
+
+  transform: translate(-50%, -50%) rotate(22deg);
+}
+
+/* =========================================================
+   POSTERS
+   ========================================================= */
+
+.customize-cta-poster {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  width: 150px;
+  aspect-ratio: 0.707;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9px;
+
+  background: #111;
+
+  box-shadow:
+    0 22px 55px rgba(0, 0, 0, 0.42);
+
+  pointer-events: none;
+
+  transition:
+    transform 400ms ease,
+    box-shadow 400ms ease;
+}
+
+.customize-cta-poster img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* =========================================================
+   LEFT POSTER
+   ========================================================= */
+
+.customize-cta-poster-left {
+  z-index: 1;
+
+  transform:
+    translate(-91%, -50%)
+    rotate(-13deg)
+    scale(0.82);
+
+  opacity: 0.65;
+}
+
+/* =========================================================
+   CENTER POSTER
+   ========================================================= */
+
+.customize-cta-poster-center {
+  z-index: 4;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(0deg);
+
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.55),
+    0 0 50px rgba(124, 58, 237, 0.17);
+}
+
+/* =========================================================
+   RIGHT POSTER
+   ========================================================= */
+
+.customize-cta-poster-right {
+  z-index: 1;
+
+  transform:
+    translate(-9%, -50%)
+    rotate(13deg)
+    scale(0.82);
+
+  opacity: 0.65;
+}
+
+/* =========================================================
+   CENTER POSTER BRAND
+   ========================================================= */
+
+.customize-cta-poster-label {
+  position: absolute;
+
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  backdrop-filter: blur(10px);
+}
+
+.customize-cta-poster-label > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 27px;
+  height: 27px;
+
+  border-radius: 6px;
+
+  background: #7c3aed;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.customize-cta-poster-label div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.customize-cta-poster-label strong {
+  color: #ffffff;
+
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+.customize-cta-poster-label small {
+  color: rgba(255, 255, 255, 0.65);
+
+  font-size: 6px;
+  letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   FLOATING INFO CARDS
+   ========================================================= */
+
+.customize-cta-floating {
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+
+  background:
+    rgba(18, 18, 18, 0.82);
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.28);
+
+  backdrop-filter: blur(14px);
+
+  z-index: 10;
+
+  white-space: nowrap;
+}
+
+.customize-cta-floating > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 6px;
+
+  background: rgba(124, 58, 237, 0.2);
+
+  color: #a78bfa;
+
+  font-size: 12px;
+}
+
+.customize-cta-floating div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.customize-cta-floating strong {
+  color: var(--color-text);
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.customize-cta-floating small {
+  color: var(--color-text-secondary);
+
+  font-size: 6px;
+  letter-spacing: 0.05em;
+}
+
+.customize-cta-floating-top {
+  top: 10%;
+  right: 0;
+}
+
+.customize-cta-floating-bottom {
+  bottom: 10%;
+  left: 0;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (min-width: 640px) {
+  .customize-cta {
+    padding: 82px 0;
+  }
+
+  .customize-cta-layout {
+    gap: 60px;
+  }
+
+  .customize-cta-content h2 {
+    font-size: clamp(54px, 9vw, 82px);
+  }
+
+  .customize-cta-content > p {
+    font-size: 13px;
+  }
+
+  .customize-cta-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .customize-cta-primary,
+  .customize-cta-secondary {
+    min-width: 165px;
+  }
+
+  .customize-cta-visual {
+    max-width: 390px;
+    height: 370px;
+  }
+
+  .customize-cta-poster {
+    width: 170px;
+  }
+
+  .customize-cta-floating-top {
+    right: 1%;
+  }
+
+  .customize-cta-floating-bottom {
+    left: 1%;
+  }
+}
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 900px) {
+  .customize-cta {
+    padding: 105px 0;
+  }
+
+  .customize-cta-layout {
+    grid-template-columns:
+      minmax(0, 1fr)
+      470px;
+
+    gap: 80px;
+  }
+
+  .customize-cta-content {
+    text-align: left;
+  }
+
+  .customize-cta-eyebrow {
+    justify-content: flex-start;
+  }
+
+  .customize-cta-content h2 {
+    max-width: 650px;
+
+    font-size: clamp(62px, 6vw, 92px);
+  }
+
+  .customize-cta-content > p {
+    margin-left: 0;
+    margin-right: 0;
+
+    font-size: 14px;
+  }
+
+  .customize-cta-features {
+    justify-content: flex-start;
+  }
+
+  .customize-cta-actions {
+    justify-content: flex-start;
+  }
+
+  .customize-cta-visual {
+    width: 470px;
+    max-width: none;
+    height: 450px;
+  }
+
+  .customize-cta-poster {
+    width: 205px;
+    border-radius: 12px;
+  }
+
+  .customize-cta-poster-left {
+    transform:
+      translate(-88%, -50%)
+      rotate(-13deg)
+      scale(0.82);
+  }
+
+  .customize-cta-poster-right {
+    transform:
+      translate(-12%, -50%)
+      rotate(13deg)
+      scale(0.82);
+  }
+
+  .customize-cta-poster-center {
+    box-shadow:
+      0 35px 80px rgba(0, 0, 0, 0.55),
+      0 0 65px rgba(124, 58, 237, 0.18);
+  }
+
+  .customize-cta-floating-top {
+    top: 12%;
+    right: 2%;
+  }
+
+  .customize-cta-floating-bottom {
+    bottom: 12%;
+    left: 2%;
+  }
+}
+
+/* =========================================================
+   LARGE DESKTOP
+   ========================================================= */
+
+@media (min-width: 1200px) {
+  .customize-cta-layout {
+    grid-template-columns:
+      minmax(0, 1fr)
+      520px;
+
+    gap: 100px;
+  }
+
+  .customize-cta-content h2 {
+    font-size: 92px;
+  }
+
+  .customize-cta-visual {
+    width: 520px;
+    height: 500px;
+  }
+
+  .customize-cta-poster {
+    width: 225px;
+  }
+
+  .customize-cta-poster-left {
+    transform:
+      translate(-88%, -50%)
+      rotate(-13deg)
+      scale(0.82);
+  }
+
+  .customize-cta-poster-right {
+    transform:
+      translate(-12%, -50%)
+      rotate(13deg)
+      scale(0.82);
+  }
+}
+
+/* =========================================================
+   MOBILE SAFETY
+   ========================================================= */
+
+@media (max-width: 639px) {
+  .customize-cta-floating {
+    transform: scale(0.82);
+  }
+
+  .customize-cta-floating-top {
+    right: -4px;
+  }
+
+  .customize-cta-floating-bottom {
+    left: -4px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .customize-cta-poster {
+    transition: none;
+  }
+}

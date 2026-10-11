@@ -1,0 +1,255 @@
+.poster-panel {
+  --panel-gap: clamp(7px, 1.15vw, 13px);
+  --panel-border: clamp(2px, 0.28vw, 4px);
+
+  width: 100%;
+  position: relative;
+  isolation: isolate;
+}
+
+.poster-panel-a5 {
+  aspect-ratio: 444 / 210;
+}
+
+.poster-panel-a4 {
+  aspect-ratio: 630 / 297;
+}
+
+.poster-panel-wall {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      rgba(124, 58, 237, 0.16),
+      transparent 45%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(255, 255, 255, 0)
+    ),
+    #0b0b0d;
+}
+
+.poster-panel-light {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(
+      ellipse at 50% 25%,
+      rgba(255, 255, 255, 0.08),
+      transparent 35%
+    );
+  pointer-events: none;
+}
+
+.poster-panel-stage {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 8%;
+  bottom: 8%;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #050505;
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.poster-panel-artwork {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  transition:
+    transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 400ms ease;
+}
+
+.poster-panel-piece {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc((100% - (var(--panel-gap) * 2)) / 3);
+  pointer-events: none;
+  border: var(--panel-border) solid rgba(255, 255, 255, 0.82);
+  box-shadow:
+    inset 0 0 0 1px rgba(124, 58, 237, 0.65),
+    0 12px 24px rgba(0, 0, 0, 0.25);
+  z-index: 3;
+}
+
+.poster-panel-piece-one {
+  left: 0;
+}
+
+.poster-panel-piece-two {
+  left: calc(
+    ((100% - (var(--panel-gap) * 2)) / 3) + var(--panel-gap)
+  );
+}
+
+.poster-panel-piece-three {
+  right: 0;
+}
+
+.poster-panel-gap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--panel-gap);
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.72),
+      rgba(0, 0, 0, 0.92),
+      rgba(0, 0, 0, 0.72)
+    );
+  z-index: 4;
+  box-shadow:
+    inset 1px 0 rgba(255, 255, 255, 0.05),
+    inset -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.poster-panel-gap-one {
+  left: calc(
+    ((100% - (var(--panel-gap) * 2)) / 3)
+  );
+}
+
+.poster-panel-gap-two {
+  left: calc(
+    ((100% - (var(--panel-gap) * 2)) / 3) * 2 + var(--panel-gap)
+  );
+}
+
+.poster-panel-border {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+}
+
+.poster-panel-border-one {
+  left: 0;
+  right: auto;
+  width: calc((100% - (var(--panel-gap) * 2)) / 3);
+}
+
+.poster-panel-border-two {
+  left: calc(
+    ((100% - (var(--panel-gap) * 2)) / 3) + var(--panel-gap)
+  );
+  right: auto;
+  width: calc((100% - (var(--panel-gap) * 2)) / 3);
+}
+
+.poster-panel-border-three {
+  left: auto;
+  right: 0;
+  width: calc((100% - (var(--panel-gap) * 2)) / 3);
+}
+
+.poster-panel-brand {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(8px);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.28);
+}
+
+.poster-panel-brand span {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background: linear-gradient(
+    135deg,
+    var(--zavyro-purple),
+    var(--zavyro-purple-light)
+  );
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.poster-panel-brand small {
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.poster-panel:hover .poster-panel-artwork {
+  transform: scale(1.025);
+  filter: saturate(1.05) contrast(1.02);
+}
+
+.poster-panel:hover .poster-panel-piece {
+  box-shadow:
+    inset 0 0 0 1px rgba(124, 58, 237, 0.85),
+    0 16px 30px rgba(0, 0, 0, 0.32);
+}
+
+.poster-panel-compact {
+  --panel-gap: 6px;
+}
+
+.poster-panel-compact .poster-panel-wall {
+  border-radius: 14px;
+}
+
+.poster-panel-compact .poster-panel-stage {
+  left: 3%;
+  right: 3%;
+  top: 6%;
+  bottom: 6%;
+}
+
+.poster-panel-compact .poster-panel-brand {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .poster-panel {
+    --panel-gap: 5px;
+    --panel-border: 2px;
+  }
+
+  .poster-panel-wall {
+    border-radius: 14px;
+  }
+
+  .poster-panel-stage {
+    left: 3%;
+    right: 3%;
+    top: 7%;
+    bottom: 7%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-panel-artwork {
+    transition: none;
+  }
+
+  .poster-panel:hover .poster-panel-artwork {
+    transform: none;
+  }
+}

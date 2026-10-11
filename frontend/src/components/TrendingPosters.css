@@ -1,0 +1,357 @@
+/* =========================================================
+   ZAVYRO POSTERS
+   TRENDING POSTERS
+   MOBILE-FIRST / COMPACT
+   ========================================================= */
+
+.trending-posters {
+  padding: 58px 0 62px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 15% 30%,
+      rgba(124, 58, 237, 0.16),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 85% 70%,
+      rgba(139, 92, 246, 0.1),
+      transparent 32%
+    ),
+    transparent;
+}
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.trending-heading {
+  margin-bottom: 28px;
+}
+
+.trending-heading > div {
+  max-width: 620px;
+}
+
+.trending-heading span {
+  display: inline-block;
+  margin-bottom: 7px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+
+.trending-heading h2 {
+  margin: 0;
+  font-size: clamp(30px, 8vw, 52px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.trending-heading h2 strong {
+  color: var(--accent);
+}
+
+.trending-heading p {
+  margin: 11px 0 0;
+  max-width: 430px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* =========================================================
+   GALLERY
+   ========================================================= */
+
+.trending-gallery {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* =========================================================
+   MOVING ROW
+   ========================================================= */
+
+.trending-row {
+  width: 100%;
+  overflow: hidden;
+}
+
+.trending-track {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  will-change: transform;
+}
+
+
+.trending-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  padding-right: 10px;
+}
+
+.trending-row-left .trending-track {
+  animation: trendingLeft var(--trending-speed) linear infinite;
+}
+
+.trending-row-right .trending-track {
+  animation: trendingRight var(--trending-speed) linear infinite;
+}
+
+/* =========================================================
+   POSTER CARD
+   ========================================================= */
+
+.trending-poster-card {
+  flex: 0 0 auto;
+  width: 132px;
+  height: 185px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.trending-poster-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.trending-poster-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+  transition: transform 450ms ease;
+}
+
+.trending-poster-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.78),
+      rgba(0, 0, 0, 0.08) 58%,
+      transparent 100%
+    );
+  pointer-events: none;
+}
+
+.trending-poster-info {
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  bottom: 11px;
+  z-index: 2;
+}
+
+.trending-poster-info span {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.trending-poster-info strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.05;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* =========================================================
+   DESKTOP HOVER
+   ========================================================= */
+
+@media (hover: hover) {
+  .trending-poster-card:hover {
+    z-index: 3;
+  }
+
+  .trending-poster-card:hover img {
+    transform: scale(1.06);
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (min-width: 600px) {
+  .trending-posters {
+    padding: 72px 0 78px;
+  }
+
+  .trending-heading {
+    margin-bottom: 34px;
+  }
+
+  .trending-heading span {
+    font-size: 11px;
+  }
+
+  .trending-heading h2 {
+    font-size: clamp(40px, 6vw, 58px);
+  }
+
+  .trending-heading p {
+    font-size: 14px;
+  }
+
+  .trending-gallery {
+    gap: 15px;
+  }
+
+  .trending-group {
+    gap: 12px;
+  }
+
+  .trending-poster-card {
+    width: 170px;
+    height: 238px;
+    border-radius: 14px;
+  }
+
+  .trending-poster-info {
+    left: 13px;
+    right: 13px;
+    bottom: 13px;
+  }
+
+  .trending-poster-info span {
+    font-size: 8px;
+  }
+
+  .trending-poster-info strong {
+    font-size: 16px;
+  }
+}
+
+/* =========================================================
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 900px) {
+  .trending-posters {
+    padding: 90px 0 96px;
+  }
+
+  .trending-heading {
+    margin-bottom: 40px;
+  }
+
+  .trending-gallery {
+    gap: 18px;
+  }
+
+  .trending-group {
+    gap: 14px;
+  }
+
+  .trending-poster-card {
+    width: 220px;
+    height: 305px;
+    border-radius: 16px;
+  }
+
+  .trending-poster-info {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .trending-poster-info span {
+    font-size: 9px;
+  }
+
+  .trending-poster-info strong {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   LARGE DESKTOP
+   ========================================================= */
+
+@media (min-width: 1280px) {
+  .trending-poster-card {
+    width: 245px;
+    height: 340px;
+  }
+
+  .trending-group {
+    gap: 16px;
+  }
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes trendingLeft {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes trendingRight {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .trending-row-left .trending-track,
+  .trending-row-right .trending-track {
+    animation: none;
+  }
+
+  .trending-gallery {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .trending-gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .trending-track {
+    transform: none !important;
+  }
+
+  .trending-poster-card {
+    scroll-snap-align: start;
+  }
+}

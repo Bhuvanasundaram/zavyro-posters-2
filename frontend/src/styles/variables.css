@@ -1,0 +1,43 @@
+:root {
+  /* =========================================================
+     ZAVYRO 2.0 — DESIGN TOKENS
+     ========================================================= */
+
+  /* Brand */
+  --zavyro-purple: #7c3aed;
+  --zavyro-purple-light: #8b5cf6;
+  --zavyro-purple-dark: #5b21b6;
+
+  /* Typography */
+  --font-display: "Inter", "Segoe UI", Arial, sans-serif;
+  --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+
+  /* Layout */
+  --container-width: 1280px;
+  --content-padding: 24px;
+  --header-height: 76px;
+
+  /* Radius */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.18);
+
+  /* Motion */
+  --transition-fast: 160ms ease;
+  --transition-normal: 260ms ease;
+  --transition-slow: 450ms ease;
+
+  /* Z-index */
+  --z-header: 1000;
+  --z-dropdown: 1100;
+  --z-modal: 2000;
+  --z-toast: 3000;
+}
