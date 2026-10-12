@@ -16,30 +16,24 @@ import { fileURLToPath } from "node:url";
 import { pool } from "../db.js";
 
 const router = Router();
+
 const customUploadMbParsed = Number(process.env.MAX_CUSTOM_UPLOAD_MB ?? 25);
 const MAX_CUSTOM_UPLOAD_MB = Number.isFinite(customUploadMbParsed)
   ? Math.min(25, Math.max(1, Math.floor(customUploadMbParsed)))
   : 25;
 
-const customUploadDirectory = fileURLToPath(
-  new URL("../../uploads/custom/", import.meta.url),
-);
-
-fs.mkdirSync(customUploadDirectory, { recursive: true });
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const customUpload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, callback) => {
-      callback(null, customUploadDirectory);
-    },
-    filename: (_req, file, callback) => {
-      const extension = path.extname(file.originalname).toLowerCase() || ".jpg";
-      callback(null, `custom-${Date.now()}-${crypto.randomUUID()}${extension}`);
-    },
-  }),
-  // Keep high-resolution customization uploads useful without allowing an
-  // unbounded request to exhaust disk/memory resources.
-  limits: { files: 1, fileSize: MAX_CUSTOM_UPLOAD_MB * 1024 * 1024 },
+  storage: multer.memoryStorage(),
+  limits: {
+    files: 1,
+    fileSize: MAX_CUSTOM_UPLOAD_MB * 1024 * 1024,
+  },
   fileFilter: (_req, file, callback) => {
     const allowed = new Set([
       "image/jpeg",
@@ -47,49 +41,83 @@ const customUpload = multer({
       "image/webp",
       "image/avif",
     ]);
-    callback(null, allowed.has(file.mimetype));
+
+    if (!allowed.has(file.mimetype)) {
+      return callback(new Error("Only JPEG, PNG, WebP, and AVIF images are allowed."));
+    }
+
+    callback(null, true);
   },
 });
 
 router.post("/custom-uploads", (req, res) => {
-  customUpload.single("file")(req, res, (error) => {
+  customUpload.single("file")(req, res, async (error) => {
     if (error) {
-      const message = error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE"
-        ? `Customization image must be ${MAX_CUSTOM_UPLOAD_MB} MB or smaller.`
-        : error instanceof Error ? error.message : "Custom image upload failed.";
+      const message =
+        error instanceof multer.MulterError &&
+        error.code === "LIMIT_FILE_SIZE"
+          ? `Customization image must be ${MAX_CUSTOM_UPLOAD_MB} MB or smaller.`
+          : error instanceof Error
+            ? error.message
+            : "Custom image upload failed.";
+
       return res.status(400).json({ success: false, message });
     }
 
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "Please select an image file.",
+        message: "Please select a valid image file.",
       });
     }
 
-    return res.status(201).json({
-      success: true,
-      url: `/api/shop/custom-uploads/${encodeURIComponent(req.file.filename)}`,
-      filename: req.file.filename,
-    });
+    try {
+      const uploadedImage = await new Promise<{
+        secure_url: string;
+        public_id: string;
+      }>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "zavyro/custom",
+            resource_type: "image",
+            public_id: `custom-${crypto.randomUUID()}`,
+          },
+          (uploadError, result) => {
+            if (uploadError) {
+              reject(uploadError);
+              return;
+            }
+
+            if (!result) {
+              reject(new Error("Cloudinary returned no upload result."));
+              return;
+            }
+
+            resolve({
+              secure_url: result.secure_url,
+              public_id: result.public_id,
+            });
+          },
+        );
+
+        uploadStream.end(req.file!.buffer);
+      });
+
+      return res.status(201).json({
+        success: true,
+        url: uploadedImage.secure_url,
+        filename: uploadedImage.public_id,
+      });
+    } catch (uploadError) {
+      console.error("Cloudinary custom image upload failed:", uploadError);
+
+      return res.status(502).json({
+        success: false,
+        message: "Unable to store your customization image. Please try again.",
+      });
+    }
   });
 });
-
-router.get("/custom-uploads/:filename", (req, res) => {
-  const filename = path.basename(req.params.filename);
-  if (!filename || filename !== req.params.filename || !/^[a-zA-Z0-9._-]+$/.test(filename)) {
-    return res.status(400).json({ success: false, message: "Invalid custom image filename." });
-  }
-
-  const filePath = path.join(customUploadDirectory, filename);
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).json({ success: false, message: "Custom image not found." });
-  }
-
-  res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-  return res.sendFile(filePath);
-});
-
 /* ============================================================
    GET PUBLIC PRODUCTS
    ============================================================ */
