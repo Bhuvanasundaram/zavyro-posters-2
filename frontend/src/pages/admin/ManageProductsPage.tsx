@@ -1187,7 +1187,7 @@ export default function ManageProductsPage() {
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.message || "Could not create category.");
       setNewCategoryName(""); await loadCategories(); await loadCategoryManager(result.category.id);
-      setSuccess(`Category “${result.category.name}” created.`);
+      setSuccess(`Category â€œ${result.category.name}â€ created.`);
     } catch (error) { setError(error instanceof Error ? error.message : "Could not create category."); }
     finally { setCategoryManagerBusy(false); }
   }
@@ -1266,56 +1266,157 @@ export default function ManageProductsPage() {
   }
 
   async function runBulkUpload() {
-    if (!bulkFiles.length) { setError("Choose at least one image for bulk upload."); return; }
-    if (!form.categoryId) { setError("Choose the shared category in the poster form first."); return; }
-    if (editing) { setError("Finish editing the current poster before using bulk upload."); return; }
-    setBulkProcessing(true); setError(""); setSuccess("");
+    if (!bulkFiles.length) {
+      setError("Choose at least one image for bulk upload.");
+      return;
+    }
+    if (!form.categoryId) {
+      setError("Choose the shared category in the poster form first.");
+      return;
+    }
+    if (editing) {
+      setError("Finish editing the current poster before using bulk upload.");
+      return;
+    }
+
+    setBulkProcessing(true);
+    setError("");
+    setSuccess("");
+
     let succeeded = 0;
     const failures: string[] = [];
-    try {
-      // Sequential upload is deliberate: it limits CPU, memory and backend pressure.
-      for (let index = 0; index < bulkFiles.length; index += 1) {
-        const file = bulkFiles[index];
-        const name = (bulkNames[index] || "").trim();
-        if (!name) { failures.push(`${file.name}: poster name is required.`); continue; }
-        try {
-          const uploadBody = new FormData(); uploadBody.append("file", file);
-          const uploadResponse = await fetch(`${API_URL}/api/admin/uploads`, { method: "POST", credentials: "include", body: uploadBody });
-          const uploadResult = await uploadResponse.json();
-          if (!uploadResponse.ok || !uploadResult.success || !uploadResult.url) throw new Error(uploadResult.message || "Image upload failed.");
-          const imageUrl = String(uploadResult.url);
-          const payload = {
-            name, slug: `${slugify(name)}-${Date.now().toString(36)}-${index + 1}`,
-            sku: "", description: form.description.trim(), categoryId: form.categoryId,
-            subcategoryId: form.subcategoryId || null, searchKeywords: form.searchKeywords.trim(),
-            panelSplitCount: form.panelEnabled ? form.panelSplitCount : 2,
-            isActive: form.isActive, isFeatured: form.isFeatured,
-            basePrice: money(form.sizes.A6.offerPrice), offerActive: form.offerActive,
-            offerPercent: Number(form.discountPercent) || 0, offerPrice: money(form.sizes.A5.offerPrice),
-            sizes: (form.panelEnabled ? SIZE_ORDER : BASE_SIZE_ORDER).map(sizeCode => ({
-              sizeCode, price: money(form.sizes[sizeCode].offerPrice),
-              originalPrice: money(form.sizes[sizeCode].originalPrice),
-              offerPrice: money(form.sizes[sizeCode].offerPrice), isAvailable: form.sizes[sizeCode].isAvailable,
-            })),
-            images: [{ imageUrl, altText: name, imageType: "product", sortOrder: 0, isPrimary: true }],
-          };
-          const createResponse = await fetch(`${API_URL}/api/admin/products`, {
-            method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-          });
-          const createResult = await createResponse.json();
-          if (!createResponse.ok || !createResult.success) throw new Error(createResult.message || "Product creation failed.");
-          succeeded += 1;
-        } catch (error) {
-          failures.push(`${file.name}: ${error instanceof Error ? error.message : "Upload failed."}`);
-        }
-      }
-      await loadProducts();
-      setBulkFiles([]); setBulkNames([]);
-      setSuccess(`Bulk upload finished: ${succeeded} poster(s) created${failures.length ? `; ${failures.length} failed` : "."}`);
-      if (failures.length) setError(failures.slice(0, 5).join("\n") + (failures.length > 5 ? `\n…and ${failures.length - 5} more error(s).` : ""));
-    } finally { setBulkProcessing(false); }
-  }
+    let nextIndex = 0;
 
+    const uploadAndCreate = async (index: number): Promise<void> => {
+      const file = bulkFiles[index];
+      const name = (bulkNames[index] || "").trim();
+
+      if (!name) {
+        failures.push(`${file.name}: poster name is required.`);
+        return;
+      }
+
+      try {
+        const uploadBody = new FormData();
+        uploadBody.append("file", file);
+
+        const uploadResponse = await fetch(
+          `${API_URL}/api/admin/uploads`,
+          {
+            method: "POST",
+            credentials: "include",
+            body: uploadBody,
+          },
+        );
+
+        const uploadResult = await uploadResponse.json();
+
+        if (!uploadResponse.ok || !uploadResult.success || !uploadResult.url) {
+          throw new Error(uploadResult.message || "Image upload failed.");
+        }
+
+        const imageUrl = String(uploadResult.url);
+
+        const payload = {
+          name,
+          slug: `${slugify(name)}-${Date.now().toString(36)}-${index + 1}`,
+          sku: "",
+          description: form.description.trim(),
+          categoryId: form.categoryId,
+          subcategoryId: form.subcategoryId || null,
+          searchKeywords: form.searchKeywords.trim(),
+          panelSplitCount: form.panelEnabled ? form.panelSplitCount : 2,
+          isActive: form.isActive,
+          isFeatured: form.isFeatured,
+          basePrice: money(form.sizes.A6.offerPrice),
+          offerActive: form.offerActive,
+          offerPercent: Number(form.discountPercent) || 0,
+          offerPrice: money(form.sizes.A5.offerPrice),
+          sizes: (form.panelEnabled ? SIZE_ORDER : BASE_SIZE_ORDER).map(
+            (sizeCode) => ({
+              sizeCode,
+              price: money(form.sizes[sizeCode].offerPrice),
+              originalPrice: money(form.sizes[sizeCode].originalPrice),
+              offerPrice: money(form.sizes[sizeCode].offerPrice),
+              isAvailable: form.sizes[sizeCode].isAvailable,
+            }),
+          ),
+          images: [
+            {
+              imageUrl,
+              altText: name,
+              imageType: "product",
+              sortOrder: 0,
+              isPrimary: true,
+            },
+          ],
+        };
+
+        const createResponse = await fetch(
+          `${API_URL}/api/admin/products`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        const createResult = await createResponse.json();
+
+        if (!createResponse.ok || !createResult.success) {
+          throw new Error(createResult.message || "Product creation failed.");
+        }
+
+        succeeded += 1;
+      } catch (error) {
+        failures.push(
+          `${file.name}: ${error instanceof Error ? error.message : "Upload failed."}`,
+        );
+      }
+    };
+
+    // Limit concurrency to protect the backend from excessive memory/CPU usage.
+    const worker = async (): Promise<void> => {
+      while (true) {
+        const index = nextIndex++;
+        if (index >= bulkFiles.length) return;
+        await uploadAndCreate(index);
+      }
+    };
+
+    try {
+      const workerCount = Math.min(3, bulkFiles.length);
+      await Promise.all(
+        Array.from({ length: workerCount }, () => worker()),
+      );
+
+      await loadProducts();
+      setBulkFiles([]);
+      setBulkNames([]);
+
+      setSuccess(
+        `Bulk upload finished: ${succeeded} poster(s) created${failures.length ? `; ${failures.length} failed` : "."}`,
+      );
+
+      if (failures.length) {
+        setError(
+          failures.slice(0, 5).join("\n") +
+            (failures.length > 5
+              ? `\n…and ${failures.length - 5} more error(s).`
+              : ""),
+        );
+      }
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Could not refresh products after bulk upload.",
+      );
+    } finally {
+      setBulkProcessing(false);
+    }
+  }
   async function toggleProductVisibility(product: ApiProduct) {
     const active = product.is_active ?? product.isActive ?? true;
     setError("");
@@ -1497,7 +1598,7 @@ export default function ManageProductsPage() {
             onClick={() => navigate("/admin")}
             style={{ border: "1px solid var(--color-border)", borderRadius: 10, padding: "10px 14px", background: "var(--color-surface)", color: "var(--color-text)", fontWeight: 800, cursor: "pointer", whiteSpace: "nowrap" }}
           >
-            ← Admin Dashboard
+            â† Admin Dashboard
           </button>
         </header>
 
@@ -1612,7 +1713,7 @@ export default function ManageProductsPage() {
               </div>
 
               <div style={styles.manageToolbarSearch}>
-                <span aria-hidden="true">⌕</span>
+                <span aria-hidden="true">âŒ•</span>
                 <input
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
@@ -1698,7 +1799,7 @@ export default function ManageProductsPage() {
                         <div style={styles.manageCardCategory}>
                           {product.category_name || "Uncategorized"}
                           {product.subcategory_name
-                            ? ` · ${product.subcategory_name}`
+                            ? ` Â· ${product.subcategory_name}`
                             : ""}
                         </div>
 
@@ -1709,12 +1810,12 @@ export default function ManageProductsPage() {
                         <div style={styles.manageCardPriceRow}>
                           {card.discount > 0 && card.original > card.offer && (
                             <span style={styles.manageOriginalPrice}>
-                              ₹{card.original.toLocaleString("en-IN")}
+                              â‚¹{card.original.toLocaleString("en-IN")}
                             </span>
                           )}
                           <strong style={styles.manageOfferPrice}>
                             {card.offer > 0
-                              ? `₹${card.offer.toLocaleString("en-IN")}`
+                              ? `â‚¹${card.offer.toLocaleString("en-IN")}`
                               : "Price not set"}
                           </strong>
                           {card.discount > 0 && (
@@ -1766,32 +1867,32 @@ export default function ManageProductsPage() {
 
             {!editing && (
               <details onToggle={event => { if (event.currentTarget.open) void loadCategoryManager().catch(error => setError(error instanceof Error ? error.message : "Could not load categories.")); }} style={{ border: "1px solid var(--color-border)", borderRadius: 14, padding: 14, marginBottom: 16, background: "var(--color-surface)" }}>
-                <summary style={{ cursor: "pointer", fontWeight: 850, color: "var(--color-text)" }}>CATEGORY MANAGER · Create / edit / activate</summary>
+                <summary style={{ cursor: "pointer", fontWeight: 850, color: "var(--color-text)" }}>CATEGORY MANAGER Â· Create / edit / activate</summary>
                 <p style={{ color: "var(--color-text-secondary)", fontSize: 13, lineHeight: 1.5 }}>Deactivation hides a category from new selection without deleting it or breaking products already linked to it.</p>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: 8, marginBottom: 12 }}><input value={newCategoryName} disabled={categoryManagerBusy} onChange={event => setNewCategoryName(event.target.value)} placeholder="New category name" style={styles.input} /><button type="button" disabled={categoryManagerBusy} onClick={() => void createCategory()} style={styles.primaryButton}>Add category</button></div>
                 <div style={{ display: "grid", gap: 8 }}>
-                  {managerCategories.map(category => <div key={category.id} style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto auto", gap: 7, alignItems: "center", border: "1px solid var(--color-border)", borderRadius: 10, padding: 8 }}><span style={{ color: "var(--color-text)", fontSize: 13 }}>{category.name} <small style={{ color: "var(--color-text-secondary)" }}>{category.is_active === false ? "· inactive" : "· active"}</small></span><button type="button" disabled={categoryManagerBusy} onClick={() => void editCategory(category)} style={styles.manageEditButton}>Edit</button><button type="button" disabled={categoryManagerBusy} onClick={() => void toggleCategory(category)} style={styles.manageEditButton}>{category.is_active === false ? "Activate" : "Deactivate"}</button></div>)}
+                  {managerCategories.map(category => <div key={category.id} style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto auto", gap: 7, alignItems: "center", border: "1px solid var(--color-border)", borderRadius: 10, padding: 8 }}><span style={{ color: "var(--color-text)", fontSize: 13 }}>{category.name} <small style={{ color: "var(--color-text-secondary)" }}>{category.is_active === false ? "Â· inactive" : "Â· active"}</small></span><button type="button" disabled={categoryManagerBusy} onClick={() => void editCategory(category)} style={styles.manageEditButton}>Edit</button><button type="button" disabled={categoryManagerBusy} onClick={() => void toggleCategory(category)} style={styles.manageEditButton}>{category.is_active === false ? "Activate" : "Deactivate"}</button></div>)}
                 </div>
                 <hr style={{ border: 0, borderTop: "1px solid var(--color-border)", margin: "16px 0" }} />
                 <label style={{ display: "grid", gap: 6, fontSize: 12, color: "var(--color-text-secondary)" }}>Manage subcategories for
                   <select value={managerCategoryId} disabled={categoryManagerBusy} onChange={event => { setManagerCategoryId(event.target.value); void loadCategoryManager(event.target.value).catch(error => setError(error instanceof Error ? error.message : "Could not load subcategories.")); }} style={styles.input}>{managerCategories.map(category => <option key={category.id} value={category.id}>{category.name}{category.is_active === false ? " (inactive)" : ""}</option>)}</select>
                 </label>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: 8, margin: "10px 0" }}><input value={newSubcategoryName} disabled={categoryManagerBusy || managerCategories.find(category => category.id === managerCategoryId)?.is_active === false} onChange={event => setNewSubcategoryName(event.target.value)} placeholder="New subcategory name" style={styles.input} /><button type="button" disabled={categoryManagerBusy || managerCategories.find(category => category.id === managerCategoryId)?.is_active === false} onClick={() => void createSubcategory()} style={styles.primaryButton}>Add subcategory</button></div>
-                <div style={{ display: "grid", gap: 8 }}>{managerSubcategories.map(subcategory => <div key={subcategory.id} style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto auto", gap: 7, alignItems: "center", border: "1px solid var(--color-border)", borderRadius: 10, padding: 8 }}><span style={{ color: "var(--color-text)", fontSize: 13 }}>{subcategory.name} <small style={{ color: "var(--color-text-secondary)" }}>{subcategory.is_active === false ? "· inactive" : "· active"}</small></span><button type="button" disabled={categoryManagerBusy} onClick={() => void editSubcategory(subcategory)} style={styles.manageEditButton}>Edit</button><button type="button" disabled={categoryManagerBusy} onClick={() => void toggleSubcategory(subcategory)} style={styles.manageEditButton}>{subcategory.is_active === false ? "Activate" : "Deactivate"}</button></div>)}</div>
+                <div style={{ display: "grid", gap: 8 }}>{managerSubcategories.map(subcategory => <div key={subcategory.id} style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto auto", gap: 7, alignItems: "center", border: "1px solid var(--color-border)", borderRadius: 10, padding: 8 }}><span style={{ color: "var(--color-text)", fontSize: 13 }}>{subcategory.name} <small style={{ color: "var(--color-text-secondary)" }}>{subcategory.is_active === false ? "Â· inactive" : "Â· active"}</small></span><button type="button" disabled={categoryManagerBusy} onClick={() => void editSubcategory(subcategory)} style={styles.manageEditButton}>Edit</button><button type="button" disabled={categoryManagerBusy} onClick={() => void toggleSubcategory(subcategory)} style={styles.manageEditButton}>{subcategory.is_active === false ? "Activate" : "Deactivate"}</button></div>)}</div>
               </details>
             )}
 
             {!editing && (
               <details style={{ border: "1px solid var(--color-border)", borderRadius: 14, padding: 14, marginBottom: 16, background: "var(--color-surface)" }}>
-                <summary style={{ cursor: "pointer", fontWeight: 850, color: "var(--color-text)" }}>BULK UPLOAD · Up to 20 posters</summary>
+                <summary style={{ cursor: "pointer", fontWeight: 850, color: "var(--color-text)" }}>BULK UPLOAD Â· Up to 20 posters</summary>
                 <p style={{ color: "var(--color-text-secondary)", fontSize: 13, lineHeight: 1.5 }}>Choose several image files. Each file becomes a separate product. Category, subcategory, prices, availability and other settings come from the poster form below. Files process one at a time to reduce crash risk; successful products are kept if another file fails.</p>
                 <label style={{ display: "grid", gap: 8, fontSize: 13, color: "var(--color-text)" }}>Poster image files (JPG / PNG / WEBP / AVIF, max 25 MB each)
                   <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" disabled={bulkProcessing} onChange={event => chooseBulkFiles(event.target.files)} />
                 </label>
                 {bulkFiles.length > 0 && <div style={{ display: "grid", gap: 8, marginTop: 12 }}>
-                  <strong style={{ fontSize: 13, color: "var(--color-text)" }}>{bulkFiles.length} file(s) selected — edit each product name</strong>
+                  <strong style={{ fontSize: 13, color: "var(--color-text)" }}>{bulkFiles.length} file(s) selected â€” edit each product name</strong>
                   {bulkFiles.map((file, index) => <label key={`${file.name}-${file.lastModified}-${index}`} style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: 8, alignItems: "center", fontSize: 12, color: "var(--color-text-secondary)" }}><input aria-label={`Product name for ${file.name}`} value={bulkNames[index] || ""} disabled={bulkProcessing} onChange={event => setBulkNames(names => names.map((name, i) => i === index ? event.target.value : name))} style={{ ...styles.input, minWidth: 0 }} /><span>{(file.size / (1024 * 1024)).toFixed(1)} MB</span></label>)}
-                  <button type="button" disabled={bulkProcessing} onClick={() => void runBulkUpload()} style={{ ...styles.primaryButton, opacity: bulkProcessing ? .7 : 1 }}>{bulkProcessing ? "Uploading one by one…" : `Create ${bulkFiles.length} separate product(s)`}</button>
+                  <button type="button" disabled={bulkProcessing} onClick={() => void runBulkUpload()} style={{ ...styles.primaryButton, opacity: bulkProcessing ? .7 : 1 }}>{bulkProcessing ? "Uploading one by oneâ€¦" : `Create ${bulkFiles.length} separate product(s)`}</button>
                 </div>}
               </details>
             )}
@@ -1921,7 +2022,7 @@ export default function ManageProductsPage() {
                             ? "Select category first"
                             : subcategories.length
                               ? "Select subcategory"
-                              : "No subcategories found — add them in database"}
+                              : "No subcategories found â€” add them in database"}
                         </option>
                         {subcategories.map(
                           (subcategory) => (
@@ -2035,11 +2136,11 @@ export default function ManageProductsPage() {
                         Panel prices are automatic
                       </strong>
                       <span>
-                        A5 Panel = A5 ×{" "}
+                        A5 Panel = A5 Ã—{" "}
                         {form.panelSplitCount}
                       </span>
                       <span>
-                        A4 Panel = A4 ×{" "}
+                        A4 Panel = A4 Ã—{" "}
                         {form.panelSplitCount}
                       </span>
                     </div>
@@ -2134,7 +2235,7 @@ export default function ManageProductsPage() {
                       <div style={styles.offerSummary}>
                         <strong>
                           Discount is calculated from
-                          Original → Offer.
+                          Original â†’ Offer.
                         </strong>
                         <span>
                           You can still fine-tune each
@@ -2318,7 +2419,7 @@ export default function ManageProductsPage() {
                                 styles.strikePrice
                               }
                             >
-                              ₹
+                              â‚¹
                               {
                                 selectedPreviewPrice
                                   .originalPrice
@@ -2331,7 +2432,7 @@ export default function ManageProductsPage() {
                               styles.offerPrice
                             }
                           >
-                            ₹
+                            â‚¹
                             {
                               selectedPreviewPrice
                                 .offerPrice
@@ -2590,7 +2691,7 @@ function ImageUploadCard({
           )}
 
           <span style={styles.uploadHelp}>
-            JPG, PNG, WEBP or AVIF · max 25 MB · uploaded automatically to your Zavyro backend.
+            JPG, PNG, WEBP or AVIF Â· max 25 MB Â· uploaded automatically to your Zavyro backend.
           </span>
         </div>
       </div>
@@ -2669,7 +2770,7 @@ function PriceCard({
       <label style={styles.smallField}>
         Original Price
         <div style={styles.currencyInput}>
-          <span>₹</span>
+          <span>â‚¹</span>
           <input
             type="number"
             min={0}
@@ -2688,7 +2789,7 @@ function PriceCard({
       <label style={styles.smallField}>
         Offer Price
         <div style={styles.currencyInput}>
-          <span>₹</span>
+          <span>â‚¹</span>
           <input
             type="number"
             min={0}
@@ -2747,14 +2848,14 @@ function PanelCard({
       <div style={styles.panelPriceLine}>
         <span>Original</span>
         <strong>
-          ₹{size.originalPrice}
+          â‚¹{size.originalPrice}
         </strong>
       </div>
 
       <div style={styles.panelPriceLine}>
         <span>Offer</span>
         <strong>
-          ₹{size.offerPrice}
+          â‚¹{size.offerPrice}
         </strong>
       </div>
 
