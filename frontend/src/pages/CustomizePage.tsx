@@ -4,7 +4,7 @@ import { useCart } from "../context/CartContext";
 import type { PosterSize, Product } from "../services/shopContent";
 import "./CustomizePage.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 const MAX_CUSTOM_UPLOAD_BYTES = 50 * 1024 * 1024;
 
 const NORMAL_PRICES: Record<PosterSize, number> = {

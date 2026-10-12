@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 
 type Product = { id: string; title: string; image: string; sizes?: Array<{ size: string; price: number; offerPrice: number; available?: boolean }> };
 type Line = { productId: string; title: string; imageUrl: string; size: string; quantity: number; unitPrice: number };

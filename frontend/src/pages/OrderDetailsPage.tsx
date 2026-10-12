@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 function money(v:number){return `₹${Number(v||0).toLocaleString("en-IN")}`;}
 export default function OrderDetailsPage(){
  const {orderId}=useParams(); const [order,setOrder]=useState<any>(null); const [error,setError]=useState("");

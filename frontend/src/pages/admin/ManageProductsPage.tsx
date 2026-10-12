@@ -9,7 +9,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PosterAdjustmentModal from "../../components/admin/PosterAdjustmentModal";
 import MockupStudio from "../../components/admin/MockupStudio";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 
 type SizeCode =
   | "A3"

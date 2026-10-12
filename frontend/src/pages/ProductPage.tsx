@@ -44,7 +44,7 @@ export default function ProductPage() {
 
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/shop/products`,
+          `${import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com"}/api/shop/products`,
         );
         const result = await response.json();
 
@@ -61,7 +61,7 @@ export default function ProductPage() {
           return;
         }
 
-        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const apiUrl = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
         const resolveImage = (value: string | null | undefined) => {
           if (!value) return "";
           if (/^https?:\/\//i.test(value)) return value;

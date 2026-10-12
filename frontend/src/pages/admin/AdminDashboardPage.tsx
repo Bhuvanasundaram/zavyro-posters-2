@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://zavyro-posters-api.onrender.com";
 
 type AdminUser = {
   id: string;

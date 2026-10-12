@@ -18,7 +18,7 @@ import {
 import "./HomePage.css";
 import "./HomeSpecialLinks.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 
 function resolveHomepageImage(image?: string | null): string {
   const value = (image || "").trim();

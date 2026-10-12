@@ -28,7 +28,7 @@ type RandomProduct = {
   sizes?: ProductSize[];
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 const FALLBACK_CATEGORIES = ["All", "Anime", "Movies", "Music", "Sports", "Cars", "Aesthetic", "Devotional"];
 const MIN_POSTERS = 1;
 const MAX_POSTERS = 8;

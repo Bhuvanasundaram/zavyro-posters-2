@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import { Link } from "react-router-dom";
 import { MOCKUP_TEMPLATE_STORAGE_KEY, readMockupTemplates, type MockupTemplate } from "../../components/admin/MockupStudio";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 const style = { border: "1px solid var(--color-border)", borderRadius: 10, padding: "10px 13px", background: "var(--color-background)", color: "var(--color-text)", minHeight: 42 } as const;
 async function readApiJson(response: Response, action: string): Promise<any> {
   const text = await response.text();

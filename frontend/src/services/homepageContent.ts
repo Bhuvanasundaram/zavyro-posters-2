@@ -347,7 +347,7 @@ export const defaultHomepageSettings: HomepageSettings = {
 export const heroContent = defaultHomepageSettings.hero;
 
 const API_URL =
-  (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+  (import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com").replace(/\/$/, "");
 
 /** Resolve backend-upload paths so homepage images load in local and deployed builds. */
 export function resolveHomepageImageUrl(image?: string | null): string {

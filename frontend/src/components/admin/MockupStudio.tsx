@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 export const MOCKUP_TEMPLATE_STORAGE_KEY = "zavyro.mockupTemplates.v1";
 export type MockupTemplate = { id: string; label: string; note?: string; src: string; frame: { x: number; y: number; w: number; h: number }; custom?: boolean };
 export function readMockupTemplates(): MockupTemplate[] {

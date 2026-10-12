@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 
 export type UserRole = "owner" | "admin" | "staff" | "customer";
 export type AuthUser = { id: string; fullName: string; email: string; role: UserRole };

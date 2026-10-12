@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "https://zavyro-posters-api.onrender.com";
 type Role = "owner" | "admin" | "staff" | "customer";
 type User = { id: string; full_name: string; email: string; phone?: string | null; role: Role; status: "active" | "suspended"; created_at: string };
 
