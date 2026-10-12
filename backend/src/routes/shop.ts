@@ -9,8 +9,8 @@
 
 import { Router } from "express";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 import crypto from "node:crypto";
-import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { pool } from "../db.js";
