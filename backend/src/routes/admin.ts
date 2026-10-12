@@ -1,5 +1,6 @@
 import { Router, type Response } from "express";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 import type { PoolClient } from "pg";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -21,34 +22,29 @@ const adminAccess = requireRoles("owner", "admin", "staff");
 const manageProductsAccess = requireRoles("owner", "admin", "staff");
 
 /* ============================================================
-   LOCAL POSTER IMAGE STORAGE
+   CLOUDINARY POSTER IMAGE STORAGE
    ============================================================ */
 
-const posterUploadDirectory = fileURLToPath(
-  new URL("../../uploads/posters/", import.meta.url),
-);
-
-fs.mkdirSync(posterUploadDirectory, { recursive: true });
-
-const posterStorage = multer.diskStorage({
-  destination: (_req, _file, callback) => {
-    callback(null, posterUploadDirectory);
-  },
-  filename: (_req, file, callback) => {
-    const extension = path.extname(file.originalname).toLowerCase();
-    callback(null, `${Date.now()}-${crypto.randomUUID()}${extension}`);
-  },
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 function configuredUploadLimitMb(raw: string | undefined): number {
   const parsed = Number(raw ?? 25);
-  return Number.isFinite(parsed) ? Math.min(25, Math.max(1, Math.floor(parsed))) : 25;
+  return Number.isFinite(parsed)
+    ? Math.min(25, Math.max(1, Math.floor(parsed)))
+    : 25;
 }
-const MAX_POSTER_UPLOAD_MB = configuredUploadLimitMb(process.env.MAX_POSTER_UPLOAD_MB);
+
+const MAX_POSTER_UPLOAD_MB = configuredUploadLimitMb(
+  process.env.MAX_POSTER_UPLOAD_MB,
+);
 const MAX_POSTER_UPLOAD_BYTES = MAX_POSTER_UPLOAD_MB * 1024 * 1024;
 
 const posterUpload = multer({
-  storage: posterStorage,
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: MAX_POSTER_UPLOAD_BYTES,
     files: 1,
@@ -62,7 +58,9 @@ const posterUpload = multer({
     ]);
 
     if (!allowed.has(file.mimetype)) {
-      callback(new Error("Only JPG, PNG, WEBP and AVIF images are allowed."));
+      callback(
+        new Error("Only JPG, PNG, WEBP and AVIF images are allowed."),
+      );
       return;
     }
 
@@ -70,106 +68,38 @@ const posterUpload = multer({
   },
 });
 
-function safeUploadFilename(value: string): string | null {
-  const filename = path.basename(value);
+async function uploadPosterToCloudinary(
+  buffer: Buffer,
+): Promise<{ url: string; publicId: string }> {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "zavyro-posters/posters",
+        resource_type: "image",
+        unique_filename: true,
+        overwrite: false,
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
 
-  if (!filename || filename !== value) return null;
+        if (!result?.secure_url || !result.public_id) {
+          reject(new Error("Cloudinary did not return an image URL."));
+          return;
+        }
 
-  if (!/^[a-zA-Z0-9._-]+$/.test(filename)) return null;
-
-  return filename;
-}
-
-async function saveProductImages(
-  client: PoolClient,
-  productId: string,
-  rawImages: unknown,
-): Promise<void> {
-  if (!Array.isArray(rawImages)) return;
-
-  const allowedTypes = new Set([
-    "product",
-    "thumbnail",
-    "preview",
-    "size_preview",
-    "shop_hover",
-    "shop_mockup",
-  ]);
-
-  await client.query(
-    `DELETE FROM product_images WHERE product_id = $1`,
-    [productId],
-  );
-
-  const images = rawImages.slice(0, 10);
-
-  for (let index = 0; index < images.length; index += 1) {
-    const item = images[index] as Record<string, unknown> | null;
-    const imageUrl = cleanString(item?.imageUrl ?? item?.image_url);
-
-    if (!imageUrl) continue;
-
-    const imageTypeRaw =
-      cleanString(item?.imageType ?? item?.image_type) || "product";
-
-    const imageType = allowedTypes.has(imageTypeRaw)
-      ? imageTypeRaw
-      : "product";
-
-    await client.query(
-      `
-      INSERT INTO product_images (
-        product_id,
-        image_url,
-        alt_text,
-        image_type,
-        sort_order,
-        is_primary
-      )
-      VALUES ($1, $2, $3, $4, $5, $6)
-      `,
-      [
-        productId,
-        imageUrl,
-        cleanString(item?.altText ?? item?.alt_text) || null,
-        imageType,
-        Number.isFinite(Number(item?.sortOrder ?? item?.sort_order))
-          ? Number(item?.sortOrder ?? item?.sort_order)
-          : index,
-        Boolean(
-          item?.isPrimary ??
-            item?.is_primary ??
-            (imageType === "product" && index === 0),
-        ),
-      ],
+        resolve({
+          url: result.secure_url,
+          publicId: result.public_id,
+        });
+      },
     );
-  }
+
+    stream.end(buffer);
+  });
 }
-
-/* Public image delivery. */
-router.get("/uploads/:filename", (req, res) => {
-  const filename = safeUploadFilename(req.params.filename);
-
-  if (!filename) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid image filename.",
-    });
-  }
-
-  const filePath = path.join(posterUploadDirectory, filename);
-
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).json({
-      success: false,
-      message: "Image not found.",
-    });
-  }
-
-  res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-
-  return res.sendFile(filePath);
-});
 
 /* Protected image upload. */
 router.post(
@@ -177,7 +107,7 @@ router.post(
   requireAuth,
   manageProductsAccess,
   (req, res) => {
-    posterUpload.single("file")(req, res, (error) => {
+    posterUpload.single("file")(req, res, async (error) => {
       if (error) {
         console.error("Poster image upload error:", error);
 
@@ -200,20 +130,107 @@ router.post(
         });
       }
 
-      const relativeUrl =
-        `/api/admin/uploads/${encodeURIComponent(req.file.filename)}`;
+      try {
+        const uploaded = await uploadPosterToCloudinary(req.file.buffer);
 
-      const baseUrl = `${req.protocol}://${req.get("host")}`;
+        return res.status(201).json({
+          success: true,
+          message: "Image uploaded successfully.",
+          filename: uploaded.publicId,
+          url: uploaded.url,
+        });
+      } catch (uploadError) {
+        console.error("Cloudinary poster upload failed:", uploadError);
 
-      return res.status(201).json({
-        success: true,
-        message: "Image uploaded successfully.",
-        filename: req.file.filename,
-        url: `${baseUrl}${relativeUrl}`,
-      });
+        return res.status(502).json({
+          success: false,
+          message: "Image storage failed. Please try again.",
+        });
+      }
     });
   },
 );
+
+/* ============================================================
+   SAVE PRODUCT IMAGES
+   ============================================================ */
+
+async function saveProductImages(
+  client: PoolClient,
+  productId: string,
+  rawImages: unknown,
+): Promise<void> {
+  if (rawImages === undefined) {
+    return;
+  }
+
+  if (!Array.isArray(rawImages)) {
+    throw new Error("Product images must be an array.");
+  }
+
+  await client.query(
+    "DELETE FROM product_images WHERE product_id = $1",
+    [productId],
+  );
+
+  for (let index = 0; index < rawImages.length; index++) {
+    const image = rawImages[index];
+
+    if (!image || typeof image !== "object") {
+      continue;
+    }
+
+    const item = image as Record<string, unknown>;
+    const imageUrl = cleanString(
+      item.image_url ?? item.imageUrl ?? item.url,
+    );
+
+    if (!imageUrl) {
+      continue;
+    }
+
+    const imageType = cleanString(
+      item.image_type ?? item.imageType ?? item.type,
+      "product",
+    ) || "product";
+
+    const altText = cleanString(
+      item.alt_text ?? item.altText,
+    ) || null;
+
+    const sortOrder = integerOrDefault(
+      item.sort_order ?? item.sortOrder,
+      index,
+      0,
+    );
+
+    const isPrimary =
+      item.is_primary === true ||
+      item.isPrimary === true;
+
+    await client.query(
+      `
+      INSERT INTO product_images (
+        product_id,
+        image_url,
+        alt_text,
+        image_type,
+        sort_order,
+        is_primary
+      )
+      VALUES ($1, $2, $3, $4, $5, $6)
+      `,
+      [
+        productId,
+        imageUrl,
+        altText,
+        imageType,
+        sortOrder,
+        isPrimary,
+      ],
+    );
+  }
+}
 
 const DEFAULT_PRICES = {
   A3: 79,
@@ -2746,7 +2763,23 @@ router.post("/mockup-templates", requireAuth, manageProductsAccess, async (req: 
   if (!frame || ![frame.x, frame.y, frame.w, frame.h].every((v) => Number.isFinite(Number(v))) || Number(frame.x) < 0 || Number(frame.y) < 0 || Number(frame.w) <= 0 || Number(frame.h) <= 0 || Number(frame.x) + Number(frame.w) > 1.001 || Number(frame.y) + Number(frame.h) > 1.001) return res.status(400).json({ success: false, message: "Select a valid poster frame area before saving." });
   let parsedUrl: URL;
   try { parsedUrl = new URL(imageUrl, `${req.protocol}://${req.get("host")}`); } catch { return res.status(400).json({ success: false, message: "Invalid uploaded image URL." }); }
-  if (!parsedUrl.pathname.startsWith("/api/admin/uploads/") || (parsedUrl.origin !== `${req.protocol}://${req.get("host")}` && process.env.NODE_ENV === "production")) return res.status(400).json({ success: false, message: "Template images must use this application's uploaded image storage." });
+  const isCloudinaryUrl =
+  parsedUrl.protocol === "https:" &&
+  (
+    parsedUrl.hostname === "res.cloudinary.com" ||
+    parsedUrl.hostname.endsWith(".res.cloudinary.com")
+  );
+
+const isLegacyLocalUpload =
+  parsedUrl.origin === `${req.protocol}://${req.get("host")}` &&
+  parsedUrl.pathname.startsWith("/api/admin/uploads/");
+
+if (!isCloudinaryUrl && !isLegacyLocalUpload) {
+  return res.status(400).json({
+    success: false,
+    message: "Template images must use Cloudinary or an existing local upload.",
+  });
+}
   try {
     const result = await pool.query(`INSERT INTO zavyro_mockup_templates (name,note,image_url,frame,created_by) VALUES ($1,$2,$3,$4::jsonb,$5) RETURNING id,name AS label,note,image_url AS src,frame,true AS custom`, [name,note,imageUrl,JSON.stringify({x:Number(frame.x),y:Number(frame.y),w:Number(frame.w),h:Number(frame.h)}),req.user?.id ?? null]);
     return res.status(201).json({ success: true, template: result.rows[0] });
