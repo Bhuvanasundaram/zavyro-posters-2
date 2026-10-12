@@ -1,10 +1,11 @@
-// ============================================================
+﻿// ============================================================
 // ZAVYRO POSTERS 2.0
 // PUBLIC SHOP API
 // ============================================================
 
 import { Router } from "express";
 import multer from "multer";
+import { prepareCloudinaryImage } from "../utils/prepareCloudinaryImage.js";
 import { v2 as cloudinary } from "cloudinary";
 import { pool } from "../db.js";
 
@@ -102,7 +103,7 @@ router.post("/custom-uploads", (req, res) => {
           },
         );
 
-        uploadStream.end(req.file!.buffer);
+        uploadStream.end(preparedBuffer);
       });
 
       return res.status(201).json({
@@ -285,3 +286,5 @@ router.get("/products", async (_req, res) => {
 });
 
 export default router;
+
+

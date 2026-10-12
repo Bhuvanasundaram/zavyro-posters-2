@@ -1,5 +1,6 @@
-import { Router, type Response } from "express";
+﻿import { Router, type Response } from "express";
 import multer from "multer";
+import { prepareCloudinaryImage } from "../utils/prepareCloudinaryImage.js";
 import { v2 as cloudinary } from "cloudinary";
 import type { PoolClient } from "pg";
 import crypto from "node:crypto";
@@ -71,6 +72,8 @@ const posterUpload = multer({
 async function uploadPosterToCloudinary(
   buffer: Buffer,
 ): Promise<{ url: string; publicId: string }> {
+  const preparedBuffer = await prepareCloudinaryImage(buffer);
+
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
@@ -97,7 +100,7 @@ async function uploadPosterToCloudinary(
       },
     );
 
-    stream.end(buffer);
+    stream.end(preparedBuffer);
   });
 }
 
@@ -2805,3 +2808,4 @@ router.delete("/mockup-templates/:templateId", requireAuth, manageProductsAccess
 });
 
 export default router;
+
