@@ -1,5 +1,6 @@
 import { Router, type Response } from "express";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 import type { PoolClient } from "pg";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -16,6 +17,11 @@ import {
 } from "../middleware/auth.js";
 
 const router = Router();
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const adminAccess = requireRoles("owner", "admin", "staff");
 const manageProductsAccess = requireRoles("owner", "admin", "staff");
