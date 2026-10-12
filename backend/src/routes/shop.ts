@@ -74,6 +74,8 @@ router.post("/custom-uploads", (req, res) => {
     }
 
     try {
+      const preparedBuffer = await prepareCloudinaryImage(req.file!.buffer);
+
       const uploadedImage = await new Promise<{
         secure_url: string;
         public_id: string;
@@ -286,5 +288,8 @@ router.get("/products", async (_req, res) => {
 });
 
 export default router;
+
+
+
 
 
