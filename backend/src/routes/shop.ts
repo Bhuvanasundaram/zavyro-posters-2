@@ -18,8 +18,6 @@ const MAX_CUSTOM_UPLOAD_MB = Number.isFinite(customUploadMbParsed)
   ? Math.min(25, Math.max(1, Math.floor(customUploadMbParsed)))
   : 25;
 
-const MAX_CUSTOM_UPLOAD_BYTES = MAX_CUSTOM_UPLOAD_MB * 1024 * 1024;
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -30,7 +28,7 @@ const customUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
     files: 1,
-    fileSize: MAX_CUSTOM_UPLOAD_BYTES,
+    fileSize: MAX_CUSTOM_UPLOAD_MB * 1024 * 1024,
   },
   fileFilter: (_req, file, callback) => {
     const allowed = new Set([
@@ -41,46 +39,14 @@ const customUpload = multer({
     ]);
 
     if (!allowed.has(file.mimetype)) {
-      callback(new Error("Only JPEG, PNG, WebP, and AVIF images are allowed."));
-      return;
+      return callback(
+        new Error("Only JPEG, PNG, WebP, and AVIF images are allowed."),
+      );
     }
 
     callback(null, true);
   },
 });
-
-async function uploadCustomImageToCloudinary(
-  buffer: Buffer,
-): Promise<{ url: string; publicId: string }> {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder: "zavyro-posters/custom",
-        resource_type: "image",
-        unique_filename: true,
-        overwrite: false,
-      },
-      (error, result) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        if (!result?.secure_url || !result.public_id) {
-          reject(new Error("Cloudinary did not return an image URL."));
-          return;
-        }
-
-        resolve({
-          url: result.secure_url,
-          publicId: result.public_id,
-        });
-      },
-    );
-
-    uploadStream.end(buffer);
-  });
-}
 
 router.post("/custom-uploads", (req, res) => {
   customUpload.single("file")(req, res, async (error) => {
@@ -102,19 +68,47 @@ router.post("/custom-uploads", (req, res) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "Please select an image file.",
+        message: "Please select a valid image file.",
       });
     }
 
     try {
-      const uploaded = await uploadCustomImageToCloudinary(
-        req.file.buffer,
-      );
+      const uploadedImage = await new Promise<{
+        secure_url: string;
+        public_id: string;
+      }>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "zavyro-posters/custom",
+            resource_type: "image",
+            unique_filename: true,
+            overwrite: false,
+          },
+          (uploadError, result) => {
+            if (uploadError) {
+              return reject(uploadError);
+            }
+
+            if (!result?.secure_url || !result.public_id) {
+              return reject(
+                new Error("Cloudinary returned no valid upload result."),
+              );
+            }
+
+            resolve({
+              secure_url: result.secure_url,
+              public_id: result.public_id,
+            });
+          },
+        );
+
+        uploadStream.end(req.file!.buffer);
+      });
 
       return res.status(201).json({
         success: true,
-        url: uploaded.url,
-        filename: uploaded.publicId,
+        url: uploadedImage.secure_url,
+        filename: uploadedImage.public_id,
       });
     } catch (uploadError) {
       console.error("Cloudinary custom image upload failed:", uploadError);
@@ -127,10 +121,7 @@ router.post("/custom-uploads", (req, res) => {
   });
 });
 
-// Cloudinary URLs are returned directly by the upload route.
-// No local custom-upload file-serving route is needed.
-
-
+// Custom image URLs are served directly from Cloudinary.
 /* ============================================================
    GET PUBLIC PRODUCTS
    ============================================================ */
