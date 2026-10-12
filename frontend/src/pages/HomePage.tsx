@@ -18,6 +18,17 @@ import {
 import "./HomePage.css";
 import "./HomeSpecialLinks.css";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+function resolveHomepageImage(image?: string | null): string {
+  const value = (image || "").trim();
+  if (!value) return "";
+  if (/^(https?:|data:|blob:)/i.test(value)) return value;
+  if (value.startsWith("//")) return `${window.location.protocol}${value}`;
+  if (value.startsWith("/")) return `${API_URL}${value}`;
+  return value;
+}
+
 /* =========================================================
    MOVING COLLECTION STRIP
 ========================================================= */
@@ -42,7 +53,7 @@ function CollectionMarquee({
             SHOP BY <strong>COLLECTION.</strong>
           </h2>
         </div>
-        <Link to="/categories" className="collection-view-all">
+        <Link to="/shop" className="collection-view-all">
           VIEW ALL <span>↗</span>
         </Link>
       </div>
@@ -66,7 +77,7 @@ function CollectionMarquee({
                   draggable={false}
                 >
                   <div className="collection-marquee-image">
-                    <img src={item.image} alt={item.title} loading="lazy" draggable={false} />
+                    <img src={resolveHomepageImage(item.image)} alt={item.title} loading="lazy" draggable={false} />
                     <div className="collection-marquee-overlay" />
                     <div className="collection-marquee-content">
                       <span>{item.subtitle}</span>
@@ -152,7 +163,7 @@ export default function HomePage() {
         <div
           className="home-hero-wall"
           style={{
-            backgroundImage: `url("${heroContent.backgroundImage}")`,
+            backgroundImage: `url("${resolveHomepageImage(heroContent.backgroundImage)}")`,
           }}
         />
 

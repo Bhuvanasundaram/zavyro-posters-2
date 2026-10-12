@@ -63,6 +63,8 @@ export default function ManageHomepagePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [role, setRole] = useState<"owner" | "admin" | "staff">("staff");
+  const [imageUploads, setImageUploads] = useState<Record<string, boolean>>({});
+  const [imageUploadMessages, setImageUploadMessages] = useState<Record<string, string>>({});
 
   const [newReview, setNewReview] =
     useState<HomepageReview>({
@@ -444,6 +446,46 @@ export default function ManageHomepagePage() {
     }));
   }
 
+  async function uploadHomepageImage(file: File, target: "hero" | `collection-${string}`) {
+    if (!file.type.startsWith("image/")) {
+      setImageUploadMessages((current) => ({ ...current, [target]: "Please choose an image file." }));
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      setImageUploads((current) => ({ ...current, [target]: true }));
+      setImageUploadMessages((current) => ({ ...current, [target]: "Uploading image…" }));
+
+      const response = await fetch(`${API_URL}/api/admin/uploads`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.success || !payload.url) {
+        throw new Error(payload.message || "Image upload failed.");
+      }
+
+      if (target === "hero") {
+        updateHero({ backgroundImage: payload.url });
+      } else {
+        const collectionId = target.slice("collection-".length);
+        updateCollection(collectionId, { image: payload.url });
+      }
+      setImageUploadMessages((current) => ({ ...current, [target]: "Image uploaded. Remember to click SAVE HOMEPAGE." }));
+    } catch (error) {
+      setImageUploadMessages((current) => ({
+        ...current,
+        [target]: error instanceof Error ? error.message : "Image upload failed.",
+      }));
+    } finally {
+      setImageUploads((current) => ({ ...current, [target]: false }));
+    }
+  }
+
   async function save() {
     try {
       setSaving(true);
@@ -684,23 +726,32 @@ export default function ManageHomepagePage() {
 
           <div className="z-home-hero-editor">
             <div>
-              <label>Background image URL</label>
+              <label>Upload hero background image</label>
+              <input
+                type="file"
+                accept="image/*"
+                disabled={Boolean(imageUploads.hero)}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void uploadHomepageImage(file, "hero");
+                  event.currentTarget.value = "";
+                }}
+              />
+              <small className="z-home-upload-help">Choose an image from your device. Uploads use the existing admin image storage.</small>
+              <label>Or paste an image URL</label>
               <input
                 value={content.hero.backgroundImage}
-                onChange={(event) =>
-                  updateHero({
-                    backgroundImage:
-                      event.target.value,
-                  })
-                }
+                onChange={(event) => updateHero({ backgroundImage: event.target.value })}
                 placeholder="https://..."
               />
-
+              {imageUploadMessages.hero && <small className="z-home-upload-status" role="status">{imageUploadMessages.hero}</small>}
               {content.hero.backgroundImage && (
                 <img
                   className="z-home-bg-preview"
                   src={content.hero.backgroundImage}
                   alt="Homepage background preview"
+                  onError={(event) => { event.currentTarget.style.display = "none"; }}
+                  onLoad={(event) => { event.currentTarget.style.display = "block"; }}
                 />
               )}
             </div>
@@ -780,12 +831,28 @@ export default function ManageHomepagePage() {
             {content.collections.map((item) => (
               <div className="z-home-collection-item" key={item.id}>
                 <div className="z-home-collection-preview">
-                  {item.image ? <img src={item.image} alt={item.title} /> : <span>IMAGE</span>}
+                  {item.image ? <img src={item.image} alt={item.title} onError={(event) => { event.currentTarget.style.display = "none"; }} /> : <span>IMAGE</span>}
                 </div>
                 <div className="z-home-field-grid">
                   <Field label="Title" value={item.title} onChange={(value) => updateCollection(item.id, { title: value })} />
                   <Field label="Subtitle" value={item.subtitle} onChange={(value) => updateCollection(item.id, { subtitle: value })} />
-                  <Field label="Image URL" value={item.image} onChange={(value) => updateCollection(item.id, { image: value })} />
+                  <label className="z-home-upload-field">
+                    Upload collection image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={Boolean(imageUploads[`collection-${item.id}`])}
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) void uploadHomepageImage(file, `collection-${item.id}`);
+                        event.currentTarget.value = "";
+                      }}
+                    />
+                  </label>
+                  <div className="z-home-image-url-field">
+                    <Field label="Or paste image URL" value={item.image} onChange={(value) => updateCollection(item.id, { image: value })} />
+                    {imageUploadMessages[`collection-${item.id}`] && <small className="z-home-upload-status" role="status">{imageUploadMessages[`collection-${item.id}`]}</small>}
+                  </div>
                   <Field label="Shop link" value={item.link} onChange={(value) => updateCollection(item.id, { link: value })} />
                 </div>
                 <button type="button" className="z-home-danger-button" onClick={() => removeCollection(item.id)}>REMOVE</button>
@@ -1518,6 +1585,11 @@ const styles = `
 }
 .z-home-switch.on { border-color:rgba(124,58,237,.35); }
 .z-home-switch.on span { background:rgba(124,58,237,.13); color:#8b5cf6; }
+ .z-home-upload-help,.z-home-upload-status{display:block;margin-top:6px;font-size:11px;line-height:1.5;color:var(--color-text-secondary)}
+.z-home-upload-status{color:var(--color-text-primary);font-weight:700}
+.z-home-upload-field{display:grid;gap:6px;align-content:start;color:var(--color-text-secondary);font-size:10px;font-weight:850}
+.z-home-image-url-field{min-width:0}
+.z-home-card input[type="file"]{padding:8px;min-height:42px;font-size:12px}
 .z-home-hero-editor { display:grid; gap:14px; }
 .z-home-field-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
 .z-home-card label, .z-home-add-box label { display:grid; gap:6px; color:var(--color-text-secondary); font-size:10px; font-weight:850; }

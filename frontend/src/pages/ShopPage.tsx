@@ -25,11 +25,10 @@ import {
   useState,
 } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import { useTheme } from "../context/ThemeContext";
-import { loadHomepageSettings } from "../services/homepageContent";
 
 import "./ShopPage.css";
 
@@ -78,7 +77,6 @@ type ApiProduct = {
 
   main_image?: string | null;
   hover_image?: string | null;
-  shop_image?: string | null;
 };
 
 const API_URL =
@@ -388,7 +386,7 @@ function ProductImage({
 }) {
   const mainImage =
     getImageUrl(
-      product.shop_image || product.main_image,
+      product.main_image,
     );
 
   const hoverImage =
@@ -487,8 +485,13 @@ export default function ShopPage() {
   const [error, setError] =
     useState("");
 
-  const [category, setCategory] =
-    useState("All");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedCategory = searchParams.get("category")?.trim() ?? "";
+  const [category, setCategory] = useState(() =>
+    requestedCategory && requestedCategory.toLowerCase() !== "all"
+      ? requestedCategory
+      : "All",
+  );
 
   const [
     subcategory,
@@ -531,9 +534,6 @@ export default function ShopPage() {
   const [isMobile, setIsMobile] =
     useState(false);
 
-  const [comboByProductId, setComboByProductId] =
-    useState<Record<string, string[]>>({});
-
   useEffect(() => {
     const mediaQuery =
       window.matchMedia(
@@ -563,6 +563,15 @@ export default function ShopPage() {
   }, []);
 
   useEffect(() => {
+    const requested = searchParams.get("category")?.trim() ?? "";
+    const nextCategory = requested && requested.toLowerCase() !== "all"
+      ? requested
+      : "All";
+    setCategory((current) => current === nextCategory ? current : nextCategory);
+    setSubcategory("All");
+  }, [searchParams]);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function loadProducts() {
@@ -570,11 +579,10 @@ export default function ShopPage() {
         setLoading(true);
         setError("");
 
-        const [response, homepage] =
-          await Promise.all([
-            fetch(`${API_URL}/api/shop/products`),
-            loadHomepageSettings(),
-          ]);
+        const response =
+          await fetch(
+            `${API_URL}/api/shop/products`,
+          );
 
         const result =
           await response.json();
@@ -590,16 +598,13 @@ export default function ShopPage() {
         }
 
         if (!cancelled) {
-          const nextProducts = Array.isArray(result.products) ? result.products : [];
-          setProducts(nextProducts);
-
-          const nextComboMap: Record<string, string[]> = {};
-          homepage.combos.filter((combo) => combo.visible).forEach((combo) => {
-            combo.productIds.forEach((productId) => {
-              nextComboMap[productId] = [...(nextComboMap[productId] || []), combo.title];
-            });
-          });
-          setComboByProductId(nextComboMap);
+          setProducts(
+            Array.isArray(
+              result.products,
+            )
+              ? result.products
+              : [],
+          );
         }
       } catch (err) {
         console.error(
@@ -699,8 +704,8 @@ export default function ShopPage() {
         products
           .filter(
             (product) =>
-              product.category_name ===
-              category,
+              product.category_name?.trim().toLowerCase() ===
+              category.trim().toLowerCase(),
           )
           .map(
             (product) =>
@@ -731,8 +736,8 @@ export default function ShopPage() {
         result =
           result.filter(
             (product) =>
-              product.category_name ===
-              category,
+              product.category_name?.trim().toLowerCase() ===
+              category.trim().toLowerCase(),
           );
       }
 
@@ -891,6 +896,9 @@ export default function ShopPage() {
 
   function resetFilters() {
     setCategory("All");
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("category");
+    setSearchParams(nextParams, { replace: true });
     setSubcategory("All");
     setSize("All");
     setSort("featured");
@@ -903,6 +911,10 @@ export default function ShopPage() {
     value: string,
   ) {
     setCategory(value);
+    const nextParams = new URLSearchParams(searchParams);
+    if (value === "All") nextParams.delete("category");
+    else nextParams.set("category", value);
+    setSearchParams(nextParams, { replace: true });
 
     /*
      * Whenever the category changes,
@@ -1549,16 +1561,6 @@ export default function ShopPage() {
                               {product.category_name ||
                                 "ZAVYRO"}
                             </span>
-
-                            {comboByProductId[product.id]?.length ? (
-                              <Link
-                                to={`/combos#${encodeURIComponent(comboByProductId[product.id][0])}`}
-                                className="shop-combo-badge"
-                                onClick={(event) => event.stopPropagation()}
-                              >
-                                IN COMBO · VIEW
-                              </Link>
-                            ) : null}
 
                             <span className="shop-product-from">
                               FROM ₹

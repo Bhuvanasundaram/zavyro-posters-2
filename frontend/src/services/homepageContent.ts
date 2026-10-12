@@ -347,7 +347,17 @@ export const defaultHomepageSettings: HomepageSettings = {
 export const heroContent = defaultHomepageSettings.hero;
 
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000";
+  (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+
+/** Resolve backend-upload paths so homepage images load in local and deployed builds. */
+export function resolveHomepageImageUrl(image?: string | null): string {
+  const value = (image || "").trim();
+  if (!value) return "";
+  if (/^(https?:)?\/\//i.test(value) || /^(data:|blob:)/i.test(value)) return value;
+  if (value.startsWith("/")) return `${API_URL}${value}`;
+  if (/^(uploads|images|assets)\//i.test(value)) return `${API_URL}/${value}`;
+  return value;
+}
 
 export async function loadHomepageSettings(): Promise<HomepageSettings> {
   try {
