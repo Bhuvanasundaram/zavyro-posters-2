@@ -317,7 +317,7 @@ export function ensureHomepageTable(): Promise<void> {
       .then(() => undefined);
   }
 
-  return ensurePromise;
+  return ensurePromise ?? Promise.resolve();
 }
 
 function cleanContent(input: any): HomepageContent {
