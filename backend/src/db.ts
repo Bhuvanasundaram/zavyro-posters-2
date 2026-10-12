@@ -11,6 +11,7 @@ export const pool = new Pool({
   database: process.env.DB_NAME || "zavyro_posters",
   user: process.env.DB_USER || "postgres",
   password: process.env.DB_PASSWORD,
+  ssl: process.env.DB_HOST ? { rejectUnauthorized: false } : undefined,
   max: 10,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 5_000,
