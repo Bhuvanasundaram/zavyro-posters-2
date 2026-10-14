@@ -500,3 +500,19 @@
     animation: none;
   }
 }
+/* Official Zavyro logo assets */
+.brand-loader__symbol {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+}
+
+.brand-loader__wordmark {
+  display: block;
+  width: min(260px, 72vw);
+  height: auto;
+  object-fit: contain;
+}

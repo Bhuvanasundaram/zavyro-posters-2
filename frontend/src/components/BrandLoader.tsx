@@ -49,15 +49,7 @@ export default function BrandLoader() {
               }}
             >
               <div className="brand-loader__ring" />
-
-              <div className="brand-loader__mark">
-                Z
-              </div>
-
-              <span className="brand-loader__corner brand-loader__corner--top-left" />
-              <span className="brand-loader__corner brand-loader__corner--top-right" />
-              <span className="brand-loader__corner brand-loader__corner--bottom-left" />
-              <span className="brand-loader__corner brand-loader__corner--bottom-right" />
+              <img className="brand-loader__symbol" src="/zavyro-symbol.png" alt="Zavyro Posters" />
             </motion.div>
 
             {/* Brand */}
@@ -76,7 +68,7 @@ export default function BrandLoader() {
                 duration: 0.55,
               }}
             >
-              ZAVYRO
+              <img className="brand-loader__wordmark" src="/zavyro-wordmark.png" alt="Zavyro" />
             </motion.h1>
 
             <motion.div

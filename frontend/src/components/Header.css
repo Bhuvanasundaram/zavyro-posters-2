@@ -32,6 +32,22 @@
    BRAND
    ========================================================= */
 
+.brand-symbol {
+  display: block;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.brand-wordmark {
+  display: block;
+  width: clamp(112px, 12vw, 154px);
+  max-height: 48px;
+  height: auto;
+  object-fit: contain;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;

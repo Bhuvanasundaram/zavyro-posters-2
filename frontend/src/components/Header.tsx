@@ -58,12 +58,17 @@ export default function Header() {
             }}
             aria-label="Zavyro Posters Home"
           >
-            <span className="brand-mark">Z</span>
-
-            <span className="brand-text">
-              <strong>ZAVYRO</strong>
-              <small>POSTERS</small>
-            </span>
+            <img
+              className="brand-symbol"
+              src="/zavyro-symbol.png"
+              alt=""
+              aria-hidden="true"
+            />
+            <img
+              className="brand-wordmark"
+              src="/zavyro-wordmark.png"
+              alt="Zavyro Posters"
+            />
           </Link>
 
           {/* DESKTOP NAVIGATION */}

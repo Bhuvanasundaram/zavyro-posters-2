@@ -461,13 +461,48 @@ function ProductImage({
         </span>
       </div>
 
-      {panelAvailable && (
+      {format === "panel" && panelAvailable && (
         <span className="shop-panel-badge">
-          3 PIECE
+          {product.panel_split_count ?? 3} PIECE PANEL
         </span>
       )}
     </div>
   );
+}
+
+/**
+ * Interleave products by category so the default All Posters view
+ * showcases the breadth of the catalogue instead of clustering one
+ * category at the top. Product order within each category is preserved.
+ */
+function interleaveByCategory<T extends { category_name?: string | null }>(
+  items: T[],
+): T[] {
+  const queues = new Map<string, T[]>();
+  const categoryOrder: string[] = [];
+
+  for (const item of items) {
+    const category = item.category_name?.trim() || "Other";
+    const key = category.toLocaleLowerCase();
+    if (!queues.has(key)) {
+      queues.set(key, []);
+      categoryOrder.push(key);
+    }
+    queues.get(key)!.push(item);
+  }
+
+  const mixed: T[] = [];
+  let remaining = items.length;
+  while (remaining > 0) {
+    for (const key of categoryOrder) {
+      const next = queues.get(key)?.shift();
+      if (next) {
+        mixed.push(next);
+        remaining -= 1;
+      }
+    }
+  }
+  return mixed;
 }
 
 export default function ShopPage() {
@@ -882,7 +917,15 @@ export default function ShopPage() {
         );
       }
 
-      return result;
+      const shouldMixCategories =
+        category === "All" &&
+        subcategory === "All" &&
+        sort === "featured" &&
+        format === "poster";
+
+      return shouldMixCategories
+        ? interleaveByCategory(result)
+        : result;
     }, [
       products,
       category,

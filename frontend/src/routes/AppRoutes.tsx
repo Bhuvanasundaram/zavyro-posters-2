@@ -27,52 +27,16 @@ import ProtectedRoute from "./ProtectedRoute";
 import OrderSuccessPage from "../pages/OrderSuccessPage";
 import OrderDetailsPage from "../pages/OrderDetailsPage";
 import TrackOrderPage from "../pages/TrackOrderPage";
+import "./not-found.css";
 
-function PlaceholderPage({
-  title,
-}: {
-  title: string;
-}) {
+function NotFoundPage() {
   return (
-    <div
-      style={{
-        minHeight: "70vh",
-        display: "grid",
-        placeItems: "center",
-        textAlign: "center",
-        padding: "40px",
-      }}
-    >
-      <div>
-        <div
-          style={{
-            width: 60,
-            height: 60,
-            margin: "0 auto 20px",
-            display: "grid",
-            placeItems: "center",
-            borderRadius: 18,
-            background: "#7c3aed",
-            color: "#fff",
-            fontWeight: 900,
-            fontSize: 24,
-          }}
-        >
-          Z
-        </div>
-
-        <h1>{title}</h1>
-
-        <p
-          style={{
-            color:
-              "var(--color-text-secondary)",
-          }}
-        >
-          This section is coming next.
-        </p>
-      </div>
-    </div>
+    <section className="zavyro-not-found" role="status" aria-labelledby="not-found-title">
+      <img className="zavyro-not-found__symbol" src="/zavyro-symbol.png" alt="Zavyro Posters" />
+      <h1 id="not-found-title">Oops! Page Not Found</h1>
+      <p>The page you’re looking for doesn’t exist or may have been moved.</p>
+      <a className="zavyro-not-found__home" href="/">Back to Home</a>
+    </section>
   );
 }
 
@@ -155,11 +119,7 @@ export default function AppRoutes() {
 
       <Route
         path="/404"
-        element={
-          <PlaceholderPage
-            title="Page Not Found"
-          />
-        }
+        element={<NotFoundPage />}
       />
 
       <Route
